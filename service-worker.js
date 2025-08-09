@@ -1,7 +1,4 @@
-// service-worker.js
-const CACHE_NAME = "omnia-v9"; // bump this on each release
-
-// List critical assets to pre-cache. Use relative paths for GitHub Pages.
+const CACHE_NAME = "omnia-v10";
 const ASSETS = [
   "./",
   "./index.html",
@@ -16,9 +13,7 @@ const ASSETS = [
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
 });
 
 self.addEventListener("activate", (e) => {
@@ -29,7 +24,6 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-// Network-first for HTML; cache-first for everything else
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   const accept = req.headers.get("accept") || "";
@@ -37,25 +31,19 @@ self.addEventListener("fetch", (e) => {
 
   if (isHTML) {
     e.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(req, copy));
-          return res;
-        })
-        .catch(() => caches.match(req).then((m) => m || caches.match("./index.html")))
-    );
-    return;
-  }
-
-  e.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
+      fetch(req).then((res) => {
         const copy = res.clone();
         caches.open(CACHE_NAME).then((c) => c.put(req, copy));
         return res;
-      });
-    })
-  );
+      }).catch(() => caches.match(req))
+    );
+  } else {
+    e.respondWith(
+      caches.match(req).then((cached) => cached || fetch(req).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+        return res;
+      }))
+    );
+  }
 });
