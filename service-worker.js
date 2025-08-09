@@ -1,4 +1,3 @@
-
 const CACHE_NAME = "omnia-v10";
 const ASSETS = [
   "./",
