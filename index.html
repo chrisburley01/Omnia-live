@@ -122,9 +122,6 @@
   </div>
 
   <script>
-    /* ====== Switch: Use public web APIs or offline demo ====== */
-    const USE_APIS = true; // set to false to keep everything offline
-
     /* ====== PWA registration ====== */
     let newWorker;
     if ('serviceWorker' in navigator) {
@@ -148,6 +145,10 @@
     window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('installBanner').classList.remove('hidden'); });
     document.getElementById('installNow').onclick = async () => { if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; document.getElementById('installBanner').classList.add('hidden'); };
     document.getElementById('installLater').onclick = ()=> document.getElementById('installBanner').classList.add('hidden');
+
+    /* ====== Backend URL ====== */
+    // TODO: paste your Worker URL (no trailing slash), e.g. "https://omnia-search-xyz.workers.dev"
+    const OMNIA_API = "https://YOUR-WORKER-SUBDOMAIN.workers.dev";
 
     /* ====== Local memory ====== */
     const mem = { get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
@@ -199,63 +200,69 @@
       return {type:'search', text:s.replace(/^search\s+/i,'')};
     }
 
-    /* ====== In‑app search ====== */
+    /* ====== Frontend calls your Worker ====== */
     async function omniaSearch(query){
-      if (!USE_APIS) {
-        return `<div class="rounded-xl glass card p-3">[Demo] I’d search for <b>${query}</b> and show summarized results here.</div>`;
+      try{
+        const res = await fetch(`${OMNIA_API}/search?q=${encodeURIComponent(query)}`);
+        if(!res.ok) throw new Error('API error');
+        const data = await res.json();
+
+        let html = "";
+
+        if (data.summary || data.abstract) {
+          html += `
+            <div class="mb-3">
+              <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Omnia Answer</div>
+              <div class="rounded-xl glass card p-3">${(data.summary || data.abstract).replace(/\n/g, "<br>")}</div>
+            </div>`;
+        }
+
+        if (data.links?.length) {
+          html += `<div class="mb-3">
+            <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Top results</div>
+            <div class="grid gap-2">
+              ${data.links.slice(0,6).map(t => `
+                <a class="rounded-xl glass card p-3 block hover:bg-white/5"
+                   href="${t.url}" target="_blank" rel="noopener">
+                  <div class="font-medium">${t.title}</div>
+                  <div class="text-xs text-white/60 mt-0.5">${t.host || ""}</div>
+                </a>`).join("")}
+            </div>
+          </div>`;
+        }
+
+        if (data.wiki?.length) {
+          html += `<div class="mb-3">
+            <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
+            <div class="grid gap-2">
+              ${data.wiki.map(p => `
+                <a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${p.url}" target="_blank" rel="noopener">
+                  <div class="flex items-start gap-3">
+                    ${p.thumb ? `<img src="${p.thumb}" alt="" class="w-12 h-12 rounded-md object-cover"/>` : ``}
+                    <div>
+                      <div class="font-semibold leading-tight">${p.title}</div>
+                      ${p.description ? `<div class="text-sm text-white/70 mt-0.5">${p.description}</div>` : ``}
+                    </div>
+                  </div>
+                </a>`).join("")}
+            </div>
+          </div>`;
+        }
+
+        if (data.images?.length) {
+          html += `<div class="mb-2">
+            <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Images</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              ${data.images.map(img => `<img src="${img.src}" alt="${img.alt}" class="w-full h-40 object-cover rounded-xl"/>`).join("")}
+            </div>
+          </div>`;
+        }
+
+        if (!html) html = `<div class="rounded-xl glass card p-3">No in‑app results found. Try a different query.</div>`;
+        return html;
+      }catch(err){
+        return `<div class="rounded-xl glass card p-3">Couldn’t reach Omnia API. Check your Worker URL and try again.</div>`;
       }
-      const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&t=omnia`;
-      const wikiUrl = `https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(query)}&limit=3`;
-      const [ddgRes, wikiRes] = await Promise.allSettled([
-        fetch(ddgUrl).then(r=>r.json()),
-        fetch(wikiUrl).then(r=>r.json())
-      ]);
-      const ddg = ddgRes.status==='fulfilled'?ddgRes.value:null;
-      const wiki= wikiRes.status==='fulfilled'?wikiRes.value:null;
-
-      let html = '';
-      const abstract = ddg?.AbstractText || ddg?.Abstract || '';
-      if (abstract) html += `<div class="mb-3">
-        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Answer</div>
-        <div class="rounded-xl glass card p-3">${abstract}</div></div>`;
-
-      const topics = ddg?.RelatedTopics || []; const flat=[];
-      topics.forEach(t=>{ if(t.Topics) flat.push(...t.Topics); else flat.push(t); });
-      const links = flat.filter(t=>t.FirstURL && t.Text).slice(0,4);
-      if (links.length) html += `<div class="mb-3">
-        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Top results</div>
-        <div class="grid gap-2">
-          ${links.map(t=>`<a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${t.FirstURL}" target="_blank" rel="noopener">
-            <div class="font-medium">${t.Text}</div>
-            <div class="text-xs text-white/60 mt-0.5">${new URL(t.FirstURL).hostname}</div></a>`).join('')}
-        </div></div>`;
-
-      const hits = wiki?.pages || wiki?.results || [];
-      if (hits.length) html += `<div class="mb-3">
-        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
-        <div class="grid gap-2">
-          ${hits.map(p=>{
-            const title=p.title||p.key||''; const desc=p.description||p.excerpt||'';
-            const thumb = p.thumbnail?.url || (p?.thumbnail ? `https:${p.thumbnail}` : '');
-            return `<a class="rounded-xl glass card p-3 block hover:bg-white/5"
-              href="https://en.wikipedia.org/wiki/${encodeURIComponent(title.replaceAll(' ','_'))}" target="_blank" rel="noopener">
-              <div class="flex items-start gap-3">
-                ${thumb?`<img src="${thumb}" alt="" class="w-12 h-12 rounded-md object-cover"/>`:''}
-                <div><div class="font-semibold leading-tight">${title}</div>
-                ${desc?`<div class="text-sm text-white/70 mt-0.5">${desc}</div>`:''}</div></div></a>`;
-          }).join('')}
-        </div></div>`;
-
-      const imgQ = encodeURIComponent(query);
-      const imgs = Array.from({length:6}).map((_,i)=>`
-        <img src="https://source.unsplash.com/400x300/?${imgQ}&sig=${i}" alt="${query}" class="w-full h-40 object-cover rounded-xl"/>`
-      ).join('');
-      html += `<div class="mb-2">
-        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Images</div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${imgs}</div></div>`;
-
-      if (!html) html = `<div class="rounded-xl glass card p-3">No in‑app results found. Try a different query.</div>`;
-      return html;
     }
 
     /* ====== Actions ====== */
@@ -267,4 +274,46 @@
         const {to, amount, note} = intent;
         const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
         done(`💸 Preparing to send <b>€${amount.toFixed(2)}</b> to <b>${to}</b>${note?` for <i>${note}</i>`:''}.
-             <a class="underline" href="https://paypal.me/" target="_blank">Open payment</
+             <a class="underline" href="https://paypal.me/" target="_blank">Open payment</a>`);
+        return;
+      }
+      if (intent.type==='ride'){
+        const {where, when} = intent; if (!places.includes(where)) { places.unshift(where); mem.set('omnia:places', places.slice(0,6)); }
+        const gm = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`;
+        done(`🚗 Ride plan → <b>${where}</b> <span class="text-white/70">(${when})</span><br>
+              <a class="underline" href="${gm}" target="_blank">Open Maps</a>`);
+        return;
+      }
+      if (intent.type==='order'){
+        if (!list.includes(intent.item)) { list.unshift(intent.item); mem.set('omnia:list', list.slice(0,12)); }
+        done(`🛒 Added <b>${intent.item}</b> to your list. <span class="text-white/70">Checkout coming soon.</span>`);
+        return;
+      }
+      if (intent.type==='weather'){
+        done(`🌤 Weather in <b>${intent.where}</b>: 22°C, light breeze. <span class="text-white/60">(demo)</span>`);
+        return;
+      }
+      if (intent.type==='open'){
+        done(`🧭 Opening <b>${intent.target}</b>… <span class="text-white/60">(demo)</span>`);
+        return;
+      }
+
+      // SEARCH via your Worker
+      (async ()=>{
+        const q = intent.text || '';
+        const res = await omniaSearch(q);
+        done(`<div class="text-sm mb-2">Here’s what I found for: <b>${q}</b></div>${res}`, 200);
+      })();
+    }
+
+    /* ====== Form submit ====== */
+    document.getElementById('oracle').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const text = qEl.value.trim(); if(!text) return;
+      bubble(text, true);
+      qEl.value=''; renderHints('');
+      act(parseIntent(text));
+    });
+  </script>
+</body>
+</html>
