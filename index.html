@@ -16,12 +16,9 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto'] },
-          colors: { brand: { 500:'#7c9eff', 600:'#5b87ff', 700:'#3e66ff' } },
-          boxShadow: {
-            glow: '0 0 0 2px rgba(124,158,255,.35), 0 0 42px rgba(124,158,255,.35)',
-            soft: '0 10px 30px rgba(0,0,0,.25)'
-          }
+          fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','Segoe UI','Roboto'] },
+          colors: { brand: { 500:'#7c9eff', 600:'#5b87ff' } },
+          boxShadow: { glow: '0 0 0 2px rgba(124,158,255,.35), 0 0 42px rgba(124,158,255,.35)', soft:'0 10px 30px rgba(0,0,0,.25)' }
         }
       }
     }
@@ -32,31 +29,21 @@
   <style>
     * { -webkit-tap-highlight-color: transparent; }
     body { font-family: Inter, ui-sans-serif, system-ui; color: #fff; }
-    /* Rich background: animated gradient + noise film */
-    .bg-omnia {
-      position: fixed; inset: 0; z-index: -1;
+    .bg-omnia { position: fixed; inset: 0; z-index: -1;
       background:
         radial-gradient(1200px 800px at 20% -10%, rgba(124,158,255,.22), transparent 60%),
         radial-gradient(900px 600px at 80% 0%, rgba(99,102,241,.18), transparent 60%),
-        linear-gradient(180deg, #0a0b10 0%, #06070a 100%);
-    }
-    .bg-omnia::after {
-      content:""; position:absolute; inset:0; pointer-events:none;
+        linear-gradient(180deg, #0a0b10 0%, #06070a 100%); }
+    .bg-omnia::after{ content:""; position:absolute; inset:0; pointer-events:none;
       background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="1" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.04"/></svg>');
-      mix-blend-mode: soft-light;
-      animation: grain 6s steps(10) infinite;
-    }
+      mix-blend-mode: soft-light; animation: grain 6s steps(10) infinite; }
     @keyframes grain { 0%{transform:translate(0,0)} 100%{transform:translate(-128px,64px)} }
-
     .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(12px); }
     .card { border:1px solid rgba(255,255,255,.10); border-radius:1rem; }
     .ringgrad { box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), inset 0 0 0 6px rgba(124,158,255,.08); }
-    .ai-pulse { animation: aip 1.4s ease-in-out infinite; }
-    @keyframes aip { 0%,100%{opacity:.5} 50%{opacity:1} }
-    .tap { transition: transform .12s; } .tap:active { transform: scale(.98); }
-
     .type-cursor::after { content:'▍'; opacity:.7; animation: blink 1s steps(1) infinite; }
     @keyframes blink { 50%{opacity:0} }
+    .tap { transition: transform .12s; } .tap:active { transform: scale(.98); }
   </style>
 </head>
 
@@ -80,61 +67,48 @@
     </div>
   </header>
 
-  <!-- Hero -->
+  <!-- Hero / Input -->
   <section class="max-w-3xl mx-auto px-4 pt-8">
     <div class="text-center space-y-2">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass card text-xs text-white/80">
-        <span class="ai-pulse">⚡</span> AI that understands actions & answers
+        ⚡ AI that understands actions & answers
       </div>
       <h2 class="text-3xl sm:text-4xl font-semibold">Ask Omnia anything…</h2>
       <p class="text-white/70 text-sm">Examples: <em>pay Ari 20 for lunch</em> • <em>ride to Heathrow at 8pm</em> • <em>order oat milk</em> • <em>weather in London</em></p>
     </div>
 
-    <!-- Oracle -->
     <form id="oracle" class="relative mt-6">
       <div class="relative rounded-2xl glass card ringgrad shadow-glow">
         <div class="flex items-center gap-3 px-4 pt-3">
-          <div class="w-8 h-8 rounded-xl bg-white/10 grid place-items-center ai-pulse">✨</div>
+          <div class="w-8 h-8 rounded-xl bg-white/10 grid place-items-center">✨</div>
           <div class="text-xs text-white/60">Ask Omnia…</div>
           <div class="flex-1"></div>
-          <div class="hidden sm:block text-[10px] text-white/60">Try: pay @ari 20 • ride to Atocha • order oat milk</div>
+          <div class="hidden sm:block text-[10px] text-white/60">pay @ari 20 • ride to Atocha • order oat milk</div>
         </div>
         <div class="px-4 pb-3">
           <input id="q" autocomplete="off" class="w-full h-14 bg-transparent outline-none text-base placeholder-white/50" placeholder="Type a request or question"/>
         </div>
       </div>
 
-      <!-- Smart suggestions -->
       <div id="hints" class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div>
 
-      <button class="mt-4 w-full h-12 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 shadow-glow tap font-medium">
-        Ask Omnia
-      </button>
+      <button class="mt-4 w-full h-12 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 shadow-glow tap font-medium">Ask Omnia</button>
     </form>
   </section>
 
-  <!-- AI feed -->
-  <section class="max-w-3xl mx-auto px-4 mt-6 space-y-4" id="feed"></section>
+  <!-- Feed -->
+  <section id="feed" class="max-w-3xl mx-auto px-4 mt-6 space-y-4"></section>
 
   <!-- Quick modules -->
   <section class="max-w-6xl mx-auto px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <button id="m-pay" class="tap glass card p-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div>
-        <div><p class="font-semibold leading-tight">Payments</p><p class="text-xs text-white/70">Send & request</p></div>
-      </div><span>›</span>
+      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div><div><p class="font-semibold">Payments</p><p class="text-xs text-white/70">Send & request</p></div></div><span>›</span>
     </button>
     <button id="m-ride" class="tap glass card p-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🚗</div>
-        <div><p class="font-semibold leading-tight">Rides</p><p class="text-xs text-white/70">Book & track</p></div>
-      </div><span>›</span>
+      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🚗</div><div><p class="font-semibold">Rides</p><p class="text-xs text-white/70">Book & track</p></div></div><span>›</span>
     </button>
     <button id="m-order" class="tap glass card p-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🛒</div>
-        <div><p class="font-semibold leading-tight">Groceries</p><p class="text-xs text-white/70">Smart list</p></div>
-      </div><span>›</span>
+      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🛒</div><div><p class="font-semibold">Groceries</p><p class="text-xs text-white/70">Smart list</p></div></div><span>›</span>
     </button>
   </section>
 
@@ -160,14 +134,8 @@
   <div id="installBanner" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
     <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
       <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">📲</div>
-      <div class="text-sm">
-        <div class="font-semibold">Install Omnia</div>
-        <div class="text-white/70">Add to your home screen</div>
-      </div>
-      <div class="flex gap-2">
-        <button id="installNow" class="px-3 py-2 rounded-xl bg-white text-black">Install</button>
-        <button id="installLater" class="px-3 py-2 rounded-xl glass card">Later</button>
-      </div>
+      <div class="text-sm"><div class="font-semibold">Install Omnia</div><div class="text-white/70">Add to your home screen</div></div>
+      <div class="flex gap-2"><button id="installNow" class="px-3 py-2 rounded-xl bg-white text-black">Install</button><button id="installLater" class="px-3 py-2 rounded-xl glass card">Later</button></div>
     </div>
   </div>
 
@@ -181,7 +149,7 @@
   </div>
 
   <script>
-    /* ---------- PWA registration & banners ---------- */
+    /* ------------ PWA registration & banners ------------ */
     let newWorker;
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/Omnia-live/service-worker.js').then(reg => {
@@ -197,39 +165,23 @@
       navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
     }
     document.getElementById('refreshApp').onclick = () => {
-      if (navigator.serviceWorker?.controller) {
-        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
-      }
+      if (navigator.serviceWorker?.controller) navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
     };
 
-    // A2HS banner
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); deferredPrompt = e;
-      document.getElementById('installBanner').classList.remove('hidden');
-    });
-    document.getElementById('installNow').onclick = async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null;
-      document.getElementById('installBanner').classList.add('hidden');
-    };
-    document.getElementById('installLater').onclick = () =>
-      document.getElementById('installBanner').classList.add('hidden');
+    let deferredPrompt=null;
+    window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('installBanner').classList.remove('hidden'); });
+    document.getElementById('installNow').onclick = async () => { if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; document.getElementById('installBanner').classList.add('hidden'); };
+    document.getElementById('installLater').onclick = ()=> document.getElementById('installBanner').classList.add('hidden');
 
-    /* ---------- Memory ---------- */
-    const mem = {
-      get: (k,d)=>{ try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
-      set: (k,v)=>{ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
-    };
+    /* ------------ Memory ------------ */
+    const mem = { get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
     const contacts = mem.get('omnia:contacts', ['ari','bea','chen']);
     const places = mem.get('omnia:places', ['Atocha Station','Heathrow']);
     const list = mem.get('omnia:list', ['Oat milk','Eggs','Espresso pods']);
 
-    /* ---------- Hints & input ---------- */
-    const qEl = document.getElementById('q');
-    const hints = document.getElementById('hints');
-    function renderHints(text='') {
-      const s = text.trim().toLowerCase(); const items=[];
+    /* ------------ Hints & input ------------ */
+    const qEl = document.getElementById('q'), hints = document.getElementById('hints'), feed = document.getElementById('feed');
+    function renderHints(text=''){ const s=text.trim().toLowerCase(); const items=[];
       if(!s){ items.push('pay @ari 20 for lunch','ride to Atocha at 7pm','order oat milk','weather in London','open maps','search dinner ideas'); }
       else{
         if ('pay'.startsWith(s)||s.startsWith('pay')) items.push(`pay @${contacts[0]} 20`);
@@ -240,30 +192,80 @@
         items.push(`search ${text}`);
       }
       hints.innerHTML = items.slice(0,6).map(v=>`<button class="rounded-xl glass card px-3 py-2 text-left tap" data-s="${v}">${v}</button>`).join('');
-      [...hints.querySelectorAll('[data-s]')].forEach(b => b.onclick = () => { qEl.value = b.dataset.s; });
+      [...hints.querySelectorAll('[data-s]')].forEach(b=>b.onclick=()=>{ qEl.value=b.dataset.s; });
     }
-    qEl.addEventListener('input', e => renderHints(e.target.value));
-    renderHints('');
+    qEl.addEventListener('input', e=>renderHints(e.target.value)); renderHints('');
 
-    /* ---------- AI feed helpers ---------- */
-    const feed = document.getElementById('feed');
-    const bubble = (html, mine=false) => {
-      const wrap = document.createElement('div');
-      wrap.className = mine ? 'flex justify-end' : 'flex';
-      wrap.innerHTML = `<div class="max-w-[85%] ${mine?'bg-white text-black':'glass card'} px-4 py-3 rounded-2xl shadow-soft">${html}</div>`;
-      feed.append(wrap);
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-      return wrap;
+    /* ------------ Feed helpers ------------ */
+    const bubble = (html, mine=false) => { const wrap=document.createElement('div'); wrap.className=mine?'flex justify-end':'flex';
+      wrap.innerHTML=`<div class="max-w-[85%] ${mine?'bg-white text-black':'glass card'} px-4 py-3 rounded-2xl shadow-soft">${html}</div>`;
+      feed.append(wrap); window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' }); return wrap;
     };
-    const thinking = (t='Omnia is thinking…') => {
-      const el = bubble(`<div class="type-cursor text-white/80">${t}</div>`);
-      return el.querySelector('.type-cursor');
-    };
+    const thinking = (t='Omnia is thinking…') => { const el=bubble(`<div class="type-cursor text-white/80">${t}</div>`); return el.querySelector('.type-cursor'); };
 
-    /* ---------- Intent parsing ---------- */
-    function parseIntent(q) {
-      const s = q.trim();
-      if (!s) return {type:'none'};
+    /* ------------ In‑app search engine (DDG + Wikipedia) ------------ */
+    async function omniaSearch(query){
+      const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&t=omnia`;
+      const wikiUrl = `https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(query)}&limit=3`;
+      const [ddgRes, wikiRes] = await Promise.allSettled([
+        fetch(ddgUrl).then(r=>r.json()),
+        fetch(wikiUrl).then(r=>r.json())
+      ]);
+      const ddg = ddgRes.status==='fulfilled'?ddgRes.value:null;
+      const wiki= wikiRes.status==='fulfilled'?wikiRes.value:null;
+
+      let html = '';
+      const abstract = ddg?.AbstractText || ddg?.Abstract || '';
+      if (abstract) html += `
+        <div class="mb-3">
+          <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Answer</div>
+          <div class="rounded-xl glass card p-3">${abstract}</div>
+        </div>`;
+
+      const topics = ddg?.RelatedTopics || [];
+      const flat=[]; topics.forEach(t=>{ if(t.Topics) flat.push(...t.Topics); else flat.push(t); });
+      const links = flat.filter(t=>t.FirstURL && t.Text).slice(0,4);
+      if (links.length) html += `<div class="mb-3">
+        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Top results</div>
+        <div class="grid gap-2">
+          ${links.map(t=>`
+            <a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${t.FirstURL}" target="_blank" rel="noopener">
+              <div class="font-medium">${t.Text}</div>
+              <div class="text-xs text-white/60 mt-0.5">${new URL(t.FirstURL).hostname}</div>
+            </a>`).join('')}
+        </div>
+      </div>`;
+
+      const hits = wiki?.pages || wiki?.results || [];
+      if (hits.length) html += `<div class="mb-2">
+        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
+        <div class="grid gap-2">
+          ${hits.map(p=>{
+            const title=p.title||p.key||''; const desc=p.description||p.excerpt||'';
+            const thumb = p.thumbnail?.url || (p?.thumbnail ? `https:${p.thumbnail}` : '');
+            return `
+              <a class="rounded-xl glass card p-3 block hover:bg-white/5"
+                 href="https://en.wikipedia.org/wiki/${encodeURIComponent(title.replaceAll(' ','_'))}"
+                 target="_blank" rel="noopener">
+                <div class="flex items-start gap-3">
+                  ${thumb?`<img src="${thumb}" alt="" class="w-12 h-12 rounded-md object-cover"/>`:``}
+                  <div>
+                    <div class="font-semibold leading-tight">${title}</div>
+                    ${desc?`<div class="text-sm text-white/70 mt-0.5">${desc}</div>`:''}
+                  </div>
+                </div>
+              </a>`;
+          }).join('')}
+        </div>
+      </div>`;
+
+      if (!html) html = `<div class="rounded-xl glass card p-3">No in‑app results found. Try a different query.</div>`;
+      return html;
+    }
+
+    /* ------------ Intent parsing ------------ */
+    function parseIntent(q){
+      const s=q.trim(); if(!s) return {type:'none'};
       const pay = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
       if (pay) return {type:'pay', to:pay[1], amount:parseFloat(pay[2].replace(',','.')), note:pay[3]||''};
       const ride = s.match(/^ride\s+(?:to\s+)?(.+?)(?:\s+at\s+(.+))?$/i);
@@ -277,63 +279,61 @@
       return {type:'search', text:s.replace(/^search\s+/i,'')};
     }
 
-    /* ---------- Actions ---------- */
-    function act(intent) {
+    /* ------------ Actions ------------ */
+    function act(intent){
       const t = thinking();
       const done = (html, ms=380) => setTimeout(()=> t.parentElement.outerHTML = `<div class="max-w-[85%] glass card px-4 py-3 rounded-2xl shadow-soft">${html}</div>`, ms);
 
-      if (intent.type==='pay') {
+      if (intent.type==='pay'){
         const {to, amount, note} = intent;
         const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
         done(`💸 Preparing to send <b>€${amount.toFixed(2)}</b> to <b>${to}</b>${note?` for <i>${note}</i>`:''}. <button id="openPay" class="underline">Open payment app</button>`);
         setTimeout(()=>{ const a=document.getElementById('openPay'); if(a) a.onclick=()=>window.open('https://paypal.me/','_blank'); },420);
         return;
       }
-      if (intent.type==='ride') {
+      if (intent.type==='ride'){
         const {where, when} = intent; if (!places.includes(where)) { places.unshift(where); mem.set('omnia:places', places.slice(0,6)); }
         const gm = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`;
         done(`🚗 Ride plan → <b>${where}</b> <span class="text-white/70">(${when})</span><br/><a class="underline" href="${gm}" target="_blank">Open Maps</a>`);
         return;
       }
-      if (intent.type==='order') {
+      if (intent.type==='order'){
         if (!list.includes(intent.item)) { list.unshift(intent.item); mem.set('omnia:list', list.slice(0,12)); }
         const url = `https://www.amazon.co.uk/s?k=${encodeURIComponent(intent.item)}`;
         done(`🛒 Adding <b>${intent.item}</b> to your basket.<br/><a class="underline" href="${url}" target="_blank">Search stores</a>`);
         return;
       }
-      if (intent.type==='weather') {
+      if (intent.type==='weather'){
         done(`🌤 Weather in <b>${intent.where}</b>: 22°C, light breeze. (Demo)`);
         return;
       }
-      if (intent.type==='open') {
-        const tget = intent.target.toLowerCase();
+      if (intent.type==='open'){
+        const tget=intent.target.toLowerCase();
         const link = tget.includes('map') ? 'https://maps.google.com' :
                      tget.includes('mail') ? 'mailto:' :
-                     tget.includes('sms') ? 'sms:' :
+                     tget.includes('sms')  ? 'sms:' :
                      tget.includes('whatsapp') ? 'https://wa.me/' :
                      `https://www.google.com/search?q=${encodeURIComponent(intent.target)}`;
         done(`🧭 Opening <b>${intent.target}</b><br/><a class="underline" href="${link}" target="_blank">Go</a>`);
         return;
       }
-      // search
-      const url = `https://www.google.com/search?q=${encodeURIComponent(intent.text)}`;
-      done(`🔎 Search results for <b>${intent.text}</b><br/><a class="underline" href="${url}" target="_blank">Open results</a>`);
+
+      // In‑app SEARCH (no Google redirect)
+      (async () => {
+        const q = intent.text || '';
+        const resultsHtml = await omniaSearch(q);
+        done(`<div class="text-sm mb-2">Here’s what I found for: <b>${q}</b></div>${resultsHtml}`, 200);
+      })();
     }
 
-    /* ---------- Form handlers ---------- */
+    /* ------------ Form + modules ------------ */
     document.getElementById('oracle').addEventListener('submit', (e)=>{
       e.preventDefault();
-      const text = qEl.value.trim();
-      if (!text) return;
-      bubble(text, true);
-      const intent = parseIntent(text);
-      qEl.value = ''; renderHints('');
-      act(intent);
+      const text = qEl.value.trim(); if(!text) return;
+      bubble(text, true); qEl.value=''; renderHints(''); act(parseIntent(text));
     });
 
-    /* ---------- Quick modules → open sheets ---------- */
-    const sheet = document.getElementById('sheet');
-    const sheetBody = document.getElementById('sheetBody');
+    const sheet = document.getElementById('sheet'), sheetBody = document.getElementById('sheetBody');
     const openSheet = html => { sheetBody.innerHTML = html; sheet.classList.remove('hidden'); }
     const closeSheet = () => sheet.classList.add('hidden');
     document.getElementById('closeSheet').addEventListener('click', closeSheet);
@@ -398,15 +398,6 @@
         const amt = document.getElementById('payAmt').value; e.target.href=`https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
       }
     });
-
-    // Submit helper (typed message)
-    function submitText(text){
-      if (!text) return;
-      bubble(text, true);
-      const intent = parseIntent(text);
-      act(intent);
-    }
-    document.getElementById('oracle').addEventListener('submit', (e)=>{ e.preventDefault(); const t=qEl.value.trim(); qEl.value=''; renderHints(''); submitText(t); });
   </script>
 </body>
 </html>
