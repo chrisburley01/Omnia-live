@@ -50,7 +50,7 @@
 
     /* --- Tiles --- */
     .tile {
-      @apply glass rounded-2xl p-4 tap ripple;
+      position: relative;
       aspect-ratio: 1 / 1;
       display: grid;
       grid-template-rows: 1fr auto auto;
@@ -59,9 +59,23 @@
       text-align: center;
       transition: transform .12s ease, background .15s ease, border-color .15s ease;
     }
-    .tile:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); transform: translateY(-2px); }
+    .tileInner { @apply glass rounded-2xl p-4 w-full h-full; }
+    .tile:hover .tileInner { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); transform: translateY(-2px); }
     .tile h4 { margin-top:.6rem; font-weight:600; }
     .tile p  { font-size:.8rem; color:#cbd5e1; }
+
+    /* Badges */
+    .badge {
+      position: absolute; top: 10px; right: 10px;
+      padding: 2px 7px; font-size: .7rem; line-height: 1;
+      border-radius: 999px; background: linear-gradient(90deg,#60a5fa,#22d3ee);
+      color: #0b1220; font-weight: 700; border: 1px solid rgba(255,255,255,.25);
+    }
+
+    /* Tile appear animation */
+    .tile { opacity: 0; transform: translateY(8px); }
+    .tile.appear { animation: tileIn .45s cubic-bezier(.2,.8,.2,1) forwards; }
+    @keyframes tileIn { to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -124,148 +138,184 @@
       <!-- 2 cols (mobile) · 3 cols (md) · 4 cols (lg) -->
       <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
-        <button data-open="pay" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <rect x="3" y="5" width="18" height="14" rx="3" stroke="url(#g1)" stroke-width="1.8"/>
-              <rect x="6" y="10" width="12" height="1.8" rx="0.9" fill="url(#g1)"/>
-            </svg>
+        <button data-open="pay" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <rect x="3" y="5" width="18" height="14" rx="3" stroke="url(#g1)" stroke-width="1.8"/>
+                <rect x="6" y="10" width="12" height="1.8" rx="0.9" fill="url(#g1)"/>
+              </svg>
+            </div>
+            <h4>Payments</h4>
+            <p>Send & request</p>
           </div>
-          <h4>Payments</h4>
-          <p>Send & request</p>
         </button>
 
-        <button data-open="ride" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M5 12l2-4h10l2 4" stroke="url(#g2)" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M4 16h16" stroke="url(#g2)" stroke-width="1.8" stroke-linecap="round"/>
-              <circle cx="7.5" cy="16" r="1.6" fill="url(#g2)"/><circle cx="16.5" cy="16" r="1.6" fill="url(#g2)"/>
-            </svg>
+        <button data-open="ride" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M5 12l2-4h10l2 4" stroke="url(#g2)" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M4 16h16" stroke="url(#g2)" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="7.5" cy="16" r="1.6" fill="url(#g2)"/><circle cx="16.5" cy="16" r="1.6" fill="url(#g2)"/>
+              </svg>
+            </div>
+            <h4>Rides</h4>
+            <p>Book & track</p>
           </div>
-          <h4>Rides</h4>
-          <p>Book & track</p>
         </button>
 
-        <button data-open="order" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M6 6h14l-1.2 8.5a3 3 0 0 1-3 2.5H9.5a3 3 0 0 1-3-2.5L6 6z" stroke="url(#g3)" stroke-width="1.8"/>
-              <path d="M9 6c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="url(#g3)" stroke-width="1.8"/>
-            </svg>
+        <button data-open="order" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M6 6h14l-1.2 8.5a3 3 0 0 1-3 2.5H9.5a3 3 0 0 1-3-2.5L6 6z" stroke="url(#g3)" stroke-width="1.8"/>
+                <path d="M9 6c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="url(#g3)" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <h4>Groceries</h4>
+            <p>Smart list</p>
           </div>
-          <h4>Groceries</h4>
-          <p>Smart list</p>
         </button>
 
-        <button data-open="calendar" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+        <button data-open="calendar" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
               <rect x="4" y="5" width="16" height="14" rx="2" stroke="url(#g4)" stroke-width="1.8"/>
               <path d="M4 9h16" stroke="url(#g4)" stroke-width="1.8"/>
-              <rect x="8" y="12" width="3" height="3" rx="0.8" fill="url(#g4)"/>
-            </svg>
+              <rect x="8" y="12" width="3" height="3" rx="0.8" fill="url(#g4)"/></svg>
+            </div>
+            <h4>Calendar</h4>
+            <p>Agenda & reminders</p>
           </div>
-          <h4>Calendar</h4>
-          <p>Agenda & reminders</p>
         </button>
 
-        <button data-open="messages" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="url(#g5)" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M7 10h10" stroke="url(#g5)" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
+        <button data-open="messages" class="tile tap ripple">
+          <span class="badge" id="badge-messages">2</span>
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="url(#g5)" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M7 10h10" stroke="url(#g5)" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h4>Messages</h4>
+            <p>Unified inbox</p>
           </div>
-          <h4>Messages</h4>
-          <p>Unified inbox</p>
         </button>
 
-        <button data-open="media" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <circle cx="12" cy="12" r="8" stroke="url(#g6)" stroke-width="1.8"/>
-              <path d="M10 9l6 3-6 3V9z" fill="url(#g6)"/>
-            </svg>
+        <button data-open="media" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <circle cx="12" cy="12" r="8" stroke="url(#g6)" stroke-width="1.8"/>
+                <path d="M10 9l6 3-6 3V9z" fill="url(#g6)"/>
+              </svg>
+            </div>
+            <h4>Media</h4>
+            <p>Music & video</p>
           </div>
-          <h4>Media</h4>
-          <p>Music & video</p>
         </button>
 
-        <button data-open="health" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g7" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M5 12c0-2.8 2.2-5 5-5 1.4 0 2.7.6 3.6 1.6A5 5 0 0 1 22 12c0 4.5-6.7 7-10 10-3.3-3-10-5.5-10-10z" stroke="url(#g7)" stroke-width="1.8" stroke-linejoin="round"/>
-            </svg>
+        <button data-open="health" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g7" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M5 12c0-2.8 2.2-5 5-5 1.4 0 2.7.6 3.6 1.6A5 5 0 0 1 22 12c0 4.5-6.7 7-10 10-3.3-3-10-5.5-10-10z" stroke="url(#g7)" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h4>Health</h4>
+            <p>Snapshot & goals</p>
           </div>
-          <h4>Health</h4>
-          <p>Snapshot & goals</p>
         </button>
 
-        <button data-open="smarthome" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g8" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M4 10l8-6 8 6v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="url(#g8)" stroke-width="1.8" stroke-linejoin="round"/>
-              <rect x="10" y="13" width="4" height="5" rx="1" stroke="url(#g8)" stroke-width="1.8"/>
-            </svg>
+        <button data-open="smarthome" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g8" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M4 10l8-6 8 6v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="url(#g8)" stroke-width="1.8" stroke-linejoin="round"/>
+                <rect x="10" y="13" width="4" height="5" rx="1" stroke="url(#g8)" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <h4>Smart Home</h4>
+            <p>Lights & devices</p>
           </div>
-          <h4>Smart Home</h4>
-          <p>Lights & devices</p>
         </button>
 
-        <button data-open="bookings" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g9" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M3 13l18-6-6 18-3-7-7-5z" stroke="url(#g9)" stroke-width="1.8" stroke-linejoin="round"/>
-            </svg>
+        <button data-open="bookings" class="tile tap ripple">
+          <span class="badge" id="badge-bookings">New</span>
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g9" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M3 13l18-6-6 18-3-7-7-5z" stroke="url(#g9)" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h4>Bookings</h4>
+            <p>Flights & hotels</p>
           </div>
-          <h4>Bookings</h4>
-          <p>Flights & hotels</p>
         </button>
 
-        <button data-open="maps" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g10" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" stroke="url(#g10)" stroke-width="1.8"/>
-              <circle cx="12" cy="10" r="2" fill="url(#g10)"/>
-            </svg>
+        <button data-open="maps" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g10" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" stroke="url(#g10)" stroke-width="1.8"/>
+                <circle cx="12" cy="10" r="2" fill="url(#g10)"/>
+              </svg>
+            </div>
+            <h4>Maps</h4>
+            <p>Navigate</p>
           </div>
-          <h4>Maps</h4>
-          <p>Navigate</p>
         </button>
 
-        <button data-open="id" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g11" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+        <button data-open="id" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g11" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
               <rect x="4" y="6" width="16" height="12" rx="2" stroke="url(#g11)" stroke-width="1.8"/>
               <circle cx="9" cy="12" r="2" stroke="url(#g11)" stroke-width="1.6"/>
-              <rect x="12.5" y="11" width="5" height="2" rx="1" fill="url(#g11)"/>
-            </svg>
+              <rect x="12.5" y="11" width="5" height="2" rx="1" fill="url(#g11)"/></svg>
+            </div>
+            <h4>ID & Passes</h4>
+            <p>Wallet</p>
           </div>
-          <h4>ID & Passes</h4>
-          <p>Wallet</p>
         </button>
 
-        <button data-open="files" class="tile">
-          <div class="iconWrap">
-            <svg class="icon" viewBox="0 0 24 24" fill="none">
-              <defs><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <path d="M4 7a2 2 0 0 1 2-2h5l3 3h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z" stroke="url(#g12)" stroke-width="1.8" stroke-linejoin="round"/>
-            </svg>
+        <button data-open="files" class="tile tap ripple">
+          <div class="tileInner">
+            <div class="iconWrap">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <defs><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <path d="M4 7a2 2 0 0 1 2-2h5l3 3h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z" stroke="url(#g12)" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h4>Files</h4>
+            <p>Docs & notes</p>
           </div>
-          <h4>Files</h4>
-          <p>Docs & notes</p>
         </button>
 
       </div>
@@ -356,18 +406,10 @@
     window.__toastTimer = setTimeout(()=> toast.style.display="none", 1800);
   }
   shareBtn?.addEventListener("click", async () => {
-    const shareData = {
-      title: "Omnia — One app for everything",
-      text: "Try Omnia. Ask anything, get it done.",
-      url: location.href
-    };
+    const shareData = { title: "Omnia — One app for everything", text: "Try Omnia. Ask anything, get it done.", url: location.href };
     try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(location.href);
-        showToast("Link copied");
-      }
+      if (navigator.share) { await navigator.share(shareData); }
+      else { await navigator.clipboard.writeText(location.href); showToast("Link copied"); }
     } catch {
       try { await navigator.clipboard.writeText(location.href); showToast("Link copied"); } catch {}
     }
@@ -383,6 +425,14 @@
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
+
+  /* ===== Badges control ===== */
+  function setBadge(tile, value) {
+    const el = document.getElementById(`badge-${tile}`);
+    if (!el) return;
+    if (value === 0 || value === "" || value == null) el.style.display = "none";
+    else { el.textContent = value; el.style.display = "inline-block"; }
+  }
 
   /* ===== Search (in‑app) ===== */
   const qEl = $("#query");
@@ -480,7 +530,7 @@
     <label class="text-xs text-gray-400">Recipient</label>
     <input id="payTo" class="w-full h-11 rounded-lg bg-white/10 px-3 mb-3 text-white" placeholder="@username" value="${preset.to||contacts[0]}">
     <label class="text-xs text-gray-400">Amount</label>
-    <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-lg bg_white/10 px-3 mb-3 text-white" value="${preset.amount||20}">
+    <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-lg bg-white/10 px-3 mb-3 text-white" value="${preset.amount||20}">
     <label class="text-xs text-gray-400">Note</label>
     <input id="payNote" class="w-full h-11 rounded-lg bg-white/10 px-3 text-white" placeholder="What’s this for?" value="${preset.note||''}">
     <div class="flex gap-2 mt-4">
@@ -520,7 +570,7 @@
   function sheetMessages(){ openSheet(`
     <h3 class="text-lg font-semibold">Messages</h3>
     <div class="mt-2 text-sm text-gray-300">Unified inbox coming soon. Reply, email, SMS in one place.</div>
-  `);}
+  `); setBadge("messages", 0); }
   function sheetMedia(){ openSheet(`
     <h3 class="text-lg font-semibold">Evening wind‑down</h3>
     <div class="flex items-center gap-3 mt-2">
@@ -547,7 +597,7 @@
   function sheetBookings(){ openSheet(`
     <h3 class="text-lg font-semibold">Bookings</h3>
     <div class="text-sm text-gray-300 mt-2">Search flights, hotels, trains in one view (coming soon).</div>
-  `);}
+  `); setBadge("bookings", ""); }
   function sheetMaps(){ openSheet(`
     <h3 class="text-lg font-semibold">Maps</h3>
     <div class="mt-2"><a class="underline" target="_blank" href="https://maps.google.com">Open Maps</a></div>
@@ -561,7 +611,8 @@
     <div class="text-sm text-gray-300 mt-2">Docs, notes, and shared links (coming soon).</div>
   `);}
 
-  $$(".tile,[data-open]").forEach(btn=>{
+  // tile click binds
+  document.querySelectorAll(".tile,[data-open]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const m = btn.getAttribute("data-open");
       ({pay:sheetPay, ride:sheetRide, order:sheetOrder, calendar:sheetCalendar, messages:sheetMessages,
@@ -570,28 +621,19 @@
     });
   });
 
-  // Sheet actions
-  const sheetEl = $("#sheet");
-  sheetEl.addEventListener("click",(e)=>{
-    if (e.target.id === "sendNow") {
-      const to = $("#payTo").value.trim();
-      const amt = parseFloat($("#payAmt").value);
-      if (!to) return alert("Enter recipient");
-      if (!Number.isFinite(amt) || amt<=0) return alert("Enter valid amount");
-      alert(`Sent €${amt.toFixed(2)} to ${to}`);
-      const clean = to.replace(/^@/,'');
-      const contacts = JSON.parse(localStorage.getItem("omnia:contacts")||"[]");
-      if (!contacts.includes(clean)) { contacts.unshift(clean); localStorage.setItem("omnia:contacts", JSON.stringify(contacts.slice(0,6))); }
-      $("#closeSheet").click();
-    }
-    if (e.target.id === "payOrder") { alert("Order paid • ETA ~25 min"); $("#closeSheet").click(); }
-    if (e.target.id === "bookRide") { alert("Ride booked • driver en route 🚗"); $("#closeSheet").click(); }
-    if (e.target.id === "sendPaypal") {
-      const to = $("#payTo").value.trim().replace(/^@/,'');
-      const amt = $("#payAmt").value;
-      e.target.href = `https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
-    }
-  });
+  // Appear animation — stagger as they come into view
+  const tiles = Array.from(document.querySelectorAll('.tile'));
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((e)=> {
+      if (e.isIntersecting) {
+        const idx = tiles.indexOf(e.target);
+        e.target.style.animationDelay = `${(idx % 8) * 40}ms`; // tiny stagger
+        e.target.classList.add('appear');
+        io.unobserve(e.target);
+      }
+    });
+  }, { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+  tiles.forEach(t => io.observe(t));
 
   /* ===== Install (A2HS) ===== */
   let deferredPrompt; const installBtn = $("#installBtn");
