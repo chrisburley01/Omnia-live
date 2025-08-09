@@ -3,39 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Omnia — Live Demo</title>
+  <title>Omnia — PWA</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0b0b0b" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
   <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      theme: { extend: { colors: { brand: { 500: '#6366f1' } } } }
-    }
+    tailwind.config = { theme: { extend: { colors: { brand: { 500: '#6366f1' } } } } }
   </script>
 
-  <!-- Optional font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     html, body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
-    .card { @apply border rounded-2xl bg-white shadow-sm; }
-    .dark .card { @apply bg-zinc-900 border-zinc-800; }
-    .pill { @apply px-2 py-1 text-xs rounded-full bg-zinc-100 text-zinc-600; }
-    .dark .pill { @apply bg-zinc-800 text-zinc-300; }
-    .btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition; }
-    .btn-primary { @apply bg-black text-white dark:bg-white dark:text-black; }
-    .btn-secondary { @apply bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white; }
-    .btn-ghost { @apply hover:bg-zinc-100 dark:hover:bg-zinc-800; }
-    .input { @apply h-10 px-3 rounded-md border bg-white dark:bg-zinc-900 dark:border-zinc-700 w-full; }
-    .progress { @apply h-2 rounded bg-zinc-200 overflow-hidden dark:bg-zinc-800; }
-    .progress > div { @apply h-full bg-black dark:bg-white; }
+    .card { border:1px solid #e5e7eb; border-radius:1rem; background:#fff; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+    .dark .card { background:#0a0a0a; border-color:#27272a; }
+    .pill { padding:.25rem .5rem; font-size:.75rem; border-radius:9999px; background:#f4f4f5; color:#52525b; }
+    .dark .pill { background:#27272a; color:#e5e7eb; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; border-radius:0.75rem; padding:.5rem 1rem; font-size:.9rem; font-weight:500; transition:.15s; }
+    .btn-primary { background:#000; color:#fff; } .dark .btn-primary { background:#fff; color:#000; }
+    .btn-secondary { background:#f4f4f5; color:#09090b; } .dark .btn-secondary { background:#27272a; color:#fff; }
+    .btn-ghost { background:transparent; } .btn-ghost:hover { background:#f4f4f5; } .dark .btn-ghost:hover { background:#27272a; }
+    .input { height:2.5rem; padding:0 .75rem; border-radius:.5rem; border:1px solid #e5e7eb; background:#fff; width:100%; }
+    .dark .input { background:#0a0a0a; border-color:#3f3f46; color:#fff; }
+    .progress { height:.5rem; border-radius:.5rem; background:#e5e7eb; overflow:hidden; } .dark .progress { background:#27272a; }
+    .progress > div { height:100%; background:#000; } .dark .progress > div { background:#fff; }
     .sheet { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: grid; place-items: center; z-index: 60; }
-    .dialog { @apply w-[90vw] max-w-md rounded-2xl bg-white dark:bg-zinc-900 p-4 shadow-xl; }
+    .dialog { width:min(90vw,640px); border-radius:1rem; background:#fff; padding:1rem; box-shadow:0 10px 30px rgba(0,0,0,.25); } .dark .dialog { background:#0a0a0a; }
   </style>
 
-  <!-- React UMD + Babel (so this works on GitHub Pages) -->
+  <!-- React UMD + Babel -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -44,9 +47,15 @@
 <body class="min-h-screen bg-gradient-to-b from-sky-50 to-indigo-50 dark:from-zinc-950 dark:to-zinc-900 text-zinc-900 dark:text-zinc-50">
   <div id="root"></div>
 
-  <!-- App -->
   <script type="text/babel">
     const { useState, useMemo, useEffect } = React;
+
+    /* ---------- PWA: register service worker ---------- */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+      });
+    }
 
     /* ---------- helpers ---------- */
     function usePersistedState(key, initial) {
@@ -55,4 +64,455 @@
         catch { return initial; }
       });
       useEffect(() => { try { localStorage.setItem(key, JSON.stringify(v)); } catch {} }, [v]);
-      return [
+      return [v, setV];
+    }
+
+    function Toasts() {
+      const [items, setItems] = useState([]);
+      window.toast = (msg) => {
+        const id = Math.random().toString(36).slice(2);
+        setItems(x => [...x, { id, msg }]);
+        setTimeout(() => setItems(x => x.filter(i => i.id !== id)), 2500);
+      };
+      return (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 space-y-2 z-[70]">
+          {items.map(i => (
+            <div key={i.id} className="px-4 py-2 rounded-xl bg-black text-white/90 text-sm shadow-lg">{i.msg}</div>
+          ))}
+        </div>
+      );
+    }
+
+    /* ---------- universal search ---------- */
+    function parseIntent(q) {
+      // very tiny NLU
+      const s = q.trim().toLowerCase();
+      if (!s) return { type: 'none' };
+
+      // pay [name] [amount] [note...]
+      // e.g. "pay ari 20 for lunch"
+      if (s.startsWith('pay ')) {
+        const m = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
+        if (m) return { type: 'pay', to: m[1], amount: parseFloat(m[2].replace(',', '.')), note: m[3] || '' };
+        return { type: 'pay-lite', text: s.slice(4) };
+      }
+
+      // ride to [place] [at time?]
+      const rideMatch = s.match(/^ride\s+(?:to\s+)?(.+?)(?:\s+at\s+(.+))?$/i);
+      if (rideMatch) return { type: 'ride', where: rideMatch[1], when: rideMatch[2] || 'soon' };
+
+      // order [item]
+      const ord = s.match(/^order\s+(.+)$/i);
+      if (ord) return { type: 'order', item: ord[1] };
+
+      return { type: 'search', text: s };
+    }
+
+    /* ---------- data ---------- */
+    const agenda = [
+      { id: 1, title: "Client Meeting", time: "10:00", icon: "📅" },
+      { id: 2, title: "Anniversary dinner", time: "19:00", icon: "🔔" },
+      { id: 3, title: "Daily Planner AI", time: "in 12 min", icon: "✨" },
+    ];
+    const modules = [
+      { name: "Communication", icon: "💬" },
+      { name: "Payments & Commerce", icon: "💳" },
+      { name: "Entertainment", icon: "🎬" },
+      { name: "On‑Demand Services", icon: "🚗" },
+      { name: "Health & Wellness", icon: "💓" },
+      { name: "AI Core", icon: "🧠" },
+    ];
+    const contacts = ["Ari","Bea","Chen","Diego","Eli"];
+
+    /* ---------- UI ---------- */
+    function TopBar({ dark, setDark, onIntent }) {
+      const [q, setQ] = useState("");
+      function handleSubmit(e) {
+        e.preventDefault();
+        const intent = parseIntent(q);
+        onIntent(intent);
+        setQ("");
+      }
+      return (
+        <div className="sticky top-0 z-40 backdrop-blur border-b bg-white/70 dark:bg-zinc-900/70">
+          <div className="max-w-5xl mx-auto px-4 py-3 grid gap-3 md:flex md:items-center">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 grid place-items-center">✨</div>
+              <div>
+                <h1 className="text-xl font-bold leading-none">Omnia</h1>
+                <p className="text-xs text-zinc-500 leading-none">One app. Every part of your life.</p>
+              </div>
+            </div>
+            <form className="flex-1 order-3 md:order-none" onSubmit={handleSubmit}>
+              <input className="input w-full" placeholder="Try: pay Ari 20 for lunch • ride to Atocha at 7pm • order oat milk"
+                value={q} onChange={e=>setQ(e.target.value)} />
+            </form>
+            <div className="hidden md:flex items-center gap-2">
+              <span className="pill">Private by default</span>
+              <span className="pill">Unified Identity</span>
+              <span className="pill">OmniPay</span>
+            </div>
+            <button className="btn btn-ghost border rounded-md ml-0 md:ml-2" onClick={()=>setDark(d => !d)} aria-label="Toggle theme">
+              {dark ? "☀️" : "🌙"}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function Dialog({open, onClose, children}){
+      useEffect(() => {
+        if (!open) return;
+        const onKey = (e)=> e.key === "Escape" && onClose();
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+      }, [open, onClose]);
+      if(!open) return null;
+      return (
+        <div className="sheet" onClick={onClose}>
+          <div className="dialog" onClick={(e)=>e.stopPropagation()}>{children}</div>
+        </div>
+      );
+    }
+
+    /* ---------- App ---------- */
+    function Omnia(){
+      const [tab, setTab] = useState("home");
+      const [search, setSearch] = useState("");
+      const [dark, setDark] = usePersistedState("omnia:dark", false);
+
+      const [sendOpen, setSendOpen] = useState(false);
+      const [orderOpen, setOrderOpen] = useState(false);
+      const [playerOpen, setPlayerOpen] = useState(false);
+
+      const [isSending, setIsSending] = useState(false);
+      const [isPaying, setIsPaying] = useState(false);
+      const [isPlaying, setIsPlaying] = useState(true);
+
+      const [recipient, setRecipient] = useState("");
+      const [amount, setAmount] = useState("20");
+      const [note, setNote] = useState("Coffee & snacks");
+
+      const [ridePlan, setRidePlan] = useState(null); // {where, when}
+      const [orderItem, setOrderItem] = useState("");
+
+      const filteredAgenda = useMemo(()=>agenda.filter(a=>a.title.toLowerCase().includes(search.toLowerCase())), [search]);
+
+      function handleSend() {
+        const value = parseFloat(amount);
+        if (!recipient.trim()) { toast("Please enter a recipient"); return; }
+        if (!Number.isFinite(value) || value <= 0) { toast("Enter a valid amount"); return; }
+        setIsSending(true);
+        setTimeout(() => {
+          setIsSending(false);
+          setSendOpen(false);
+          toast(`Sent €${value.toFixed(2)} to ${recipient}`);
+          setRecipient(""); setAmount("20"); setNote("Coffee & snacks");
+        }, 900);
+      }
+
+      function handlePay() {
+        setIsPaying(true);
+        setTimeout(() => {
+          setIsPaying(false);
+          setOrderOpen(false);
+          toast("Order paid • ETA ~25 min");
+        }, 900);
+      }
+
+      function onIntent(intent) {
+        // Route based on parsed input
+        if (intent.type === 'pay') {
+          setRecipient(intent.to || "");
+          setAmount(String(intent.amount || "20"));
+          setNote(intent.note || "");
+          setSendOpen(true);
+          toast(`Ready to pay ${intent.to} €${intent.amount?.toFixed?.(2) || amount}`);
+        } else if (intent.type === 'pay-lite') {
+          setSendOpen(true);
+          toast("Fill recipient and amount");
+        } else if (intent.type === 'ride') {
+          setRidePlan({ where: intent.where, when: intent.when });
+          toast(`Searching rides to ${intent.where} (${intent.when})`);
+        } else if (intent.type === 'order') {
+          setOrderItem(intent.item);
+          setOrderOpen(true);
+          toast(`Ordering: ${intent.item}`);
+        } else if (intent.type === 'search') {
+          setSearch(intent.text);
+        }
+      }
+
+      return (
+        <div className={dark ? "dark" : ""}>
+          <TopBar dark={dark} setDark={setDark} onIntent={onIntent}/>
+          <Toasts/>
+
+          <div className="max-w-5xl mx-auto px-4 py-6 grid gap-6 lg:grid-cols-3">
+            <!-- Left column -->
+            <div className="lg:col-span-2 grid gap-6">
+              <div className="card">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                  <h2 className="text-2xl font-semibold">Life Hub</h2>
+                  <input className="input w-44" placeholder="Search agenda" value={search} onChange={(e)=>setSearch(e.target.value)} />
+                </div>
+                <div className="p-4">
+                  {filteredAgenda.map(item => (
+                    <div key={item.id} className="flex items-center justify-between py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 grid place-items-center">{item.icon}</div>
+                        <div><p className="font-medium">{item.title}</p></div>
+                      </div>
+                      <div className="text-sm text-zinc-500">{item.time}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {modules.map(m => (
+                  <button key={m.name} className="card p-4 flex items-center justify-between active:scale-[0.99]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500/15 to-indigo-500/15 grid place-items-center">{m.icon}</div>
+                      <div>
+                        <p className="font-semibold leading-tight">{m.name}</p>
+                        <p className="text-xs text-zinc-500">Open</p>
+                      </div>
+                    </div>
+                    <span className="btn btn-ghost">⋯</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="card">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800">
+                  <h3 className="font-semibold text-lg">Communication</h3>
+                </div>
+                <div className="p-4">
+                  <div className="flex gap-2">
+                    {['home','calls','messages','meet'].map(v=> (
+                      <button key={v} onClick={()=>setTab(v)} className={'px-4 py-2 rounded-md border ' + (tab===v ? 'bg-zinc-100 dark:bg-zinc-800' : '')}>
+                        {v.charAt(0).toUpperCase()+v.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                  {tab==='home' && (
+                    <div className="mt-4">
+                      <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                        {contacts.map(c => (
+                          <div key={c} className="flex flex-col items-center text-center">
+                            <div className="w-10 h-10 rounded-full bg-zinc-200 grid place-items-center mb-1">{c[0]}</div>
+                            <span className="text-xs">{c}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                        <div className="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                          <p className="text-sm font-medium">Contract draft — Team Apollo</p>
+                          <p className="text-xs text-zinc-500">Last edited 2h ago · shared</p>
+                          <div className="mt-3 flex gap-2">
+                            <button className="btn btn-secondary">Open</button>
+                            <button className="btn btn-ghost">Share</button>
+                          </div>
+                        </div>
+                        <div className="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                          <p className="text-sm font-medium">Weekly sync</p>
+                          <p className="text-xs text-zinc-500">Tomorrow 09:30 · video</p>
+                          <div className="mt-3 flex gap-2">
+                            <button className="btn btn-secondary">Join</button>
+                            <button className="btn btn-ghost">Reschedule</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {tab==='calls' && <div className="mt-4 text-sm text-zinc-500">Recent calls will appear here.</div>}
+                  {tab==='messages' && <div className="mt-4 text-sm text-zinc-500">Messages unified across apps (SMS, email, chat).</div>}
+                  {tab==='meet' && <div className="mt-4 text-sm text-zinc-500">Your upcoming meetings and rooms.</div>}
+                </div>
+              </div>
+            </div>
+
+            <!-- Right column -->
+            <div className="grid gap-6">
+              <div className="card">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold">OmniPay Wallet</h3>
+                </div>
+                <div className="p-4">
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-sm text-zinc-500">Available Balance</p>
+                      <p className="text-3xl font-bold">€1,284.40</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="btn btn-secondary rounded-xl" onClick={()=> setSendOpen(true)} disabled={isSending}>
+                        {isSending ? "Sending…" : "Send"}
+                      </button>
+                      <button className="btn btn-primary rounded-xl" onClick={()=> setOrderOpen(true)} disabled={isPaying}>
+                        {isPaying ? "Paying…" : "Pay"}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center justify-between text-sm"><span>Budget — August</span><span>62%</span></div>
+                    <div className="progress"><div style={{width:'62%'}}></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ride planner with quotes when universal search is used -->
+              <div className="card">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2"><span>🚗</span><h3 className="text-lg font-semibold">Ride to next event</h3></div>
+                  <span className="pill">ETA 7 min</span>
+                </div>
+                <div className="p-4 space-y-3">
+                  {!ridePlan && (
+                    <div className="text-sm text-zinc-500">Tip: try the search bar — “ride to Atocha at 7pm”.</div>
+                  )}
+                  {ridePlan && (
+                    <>
+                      <div className="text-sm">Destination: <b>{ridePlan.where}</b> • When: <b>{ridePlan.when}</b></div>
+                      <div className="grid gap-2">
+                        <button className="btn btn-secondary justify-between">
+                          SwiftX • 6–8 min • €12.80 <span className="pill">Select</span>
+                        </button>
+                        <button className="btn btn-secondary justify-between">
+                          CityGo • 7–10 min • €11.90 <span className="pill">Select</span>
+                        </button>
+                        <button className="btn btn-secondary justify-between">
+                          EcoRide • 9–12 min • €10.50 <span className="pill">Select</span>
+                        </button>
+                      </div>
+                      <button className="btn btn-primary w-full" onclick="toast('Ride booked • Driver en route 🚗')">Book best option</button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2"><span>☕</span><h3 className="text-lg font-semibold">Meal & Groceries</h3></div>
+                  <span className="pill">Smart List</span>
+                </div>
+                <div className="p-4">
+                  <ul className="text-sm list-disc ml-5 space-y-1">
+                    <li>Salmon, spinach, lemon</li>
+                    <li>Oat milk, espresso pods</li>
+                    <li>Birthday candles 🎂</li>
+                  </ul>
+                  <div className="mt-3 flex gap-2">
+                    <button className="btn btn-secondary" onClick={()=>setOrderOpen(true)} disabled={isPaying}>
+                      {isPaying ? "Paying…" : "Order"}
+                    </button>
+                    <button className="btn btn-ghost" onClick={()=>toast('Add item coming soon')}>Add item</button>
+                  </div>
+                  {orderItem && <p className="text-xs mt-2">From search: <b>{orderItem}</b></p>}
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2"><span>🎵</span><h3 className="text-lg font-semibold">Evening wind‑down</h3></div>
+                  <span className="pill">Playlist</span>
+                </div>
+                <div className="p-4 flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 grid place-items-center">🎵</div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Calm Focus</p>
+                    <p className="text-xs text-zinc-500">Suggested by AI Core after workout</p>
+                  </div>
+                  <button className="btn btn-secondary" onClick={()=>setPlayerOpen(true)}>{isPlaying ? "Open player" : "Resume"}</button>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2"><span>💓</span><h3 className="text-lg font-semibold">Health snapshot</h3></div>
+                  <span className="pill">Today</span>
+                </div>
+                <div className="p-4 space-y-2 text-sm">
+                  <div className="flex items-center justify-between"><span>Steps</span><span>7,420</span></div>
+                  <div className="progress"><div style={{width:'74%'}}></div></div>
+                  <div className="flex items-center justify-between"><span>Recovery</span><span>Good</span></div>
+                  <div className="progress"><div style={{width:'66%'}}></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Send Money -->
+          <Dialog open={sendOpen} onClose={()=>setSendOpen(false)}>
+            <h3 className="text-lg font-semibold">Send money</h3>
+            <p className="text-sm text-zinc-500">Transfer instantly with OmniPay.</p>
+            <div className="space-y-3 mt-3">
+              <div>
+                <label className="text-xs text-zinc-500">Recipient</label>
+                <input className="input" value={recipient} onChange={(e)=>setRecipient(e.target.value)} placeholder="@username or IBAN" />
+              </div>
+              <div>
+                <label className="text-xs text-zinc-500">Amount</label>
+                <input className="input" value={amount} onChange={(e)=>setAmount(e.target.value)} type="number" min="1" step="0.01" />
+              </div>
+              <div>
+                <label className="text-xs text-zinc-500">Note</label>
+                <input className="input" value={note} onChange={(e)=>setNote(e.target.value)} placeholder="What’s this for?" />
+              </div>
+            </div>
+            <button className="btn btn-primary w-full mt-4" onClick={handleSend} disabled={isSending}>
+              {isSending ? "Sending…" : `Send €${amount || '0'}`}
+            </button>
+          </Dialog>
+
+          <!-- Order Confirm -->
+          <Dialog open={orderOpen} onClose={()=>setOrderOpen(false)}>
+            <h3 className="text-lg font-semibold">Confirm order</h3>
+            <p className="text-sm text-zinc-500">Groceries will be delivered in ~25 minutes.</p>
+            <div className="text-sm mt-3">
+              <ul className="list-disc ml-5 space-y-1">
+                <li>Salmon, spinach, lemon</li>
+                <li>Oat milk, espresso pods</li>
+                <li>Birthday candles</li>
+              </ul>
+              <p className="mt-3">Total (est.): €28.60</p>
+              {orderItem && <p className="mt-2 text-xs">Added from search: <b>{orderItem}</b></p>}
+            </div>
+            <button className="btn btn-primary w-full mt-4" onClick={handlePay} disabled={isPaying}>
+              {isPaying ? "Paying…" : "Pay with OmniPay"}
+            </button>
+          </Dialog>
+
+          <!-- Mini Player -->
+          <Dialog open={playerOpen} onClose={()=>setPlayerOpen(false)}>
+            <h3 className="text-lg font-semibold">Playing: Calm Focus</h3>
+            <p className="text-sm text-zinc-500">AI-curated for your evening routine.</p>
+            <div className="flex items-center gap-3 mt-3">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/30 to-sky-500/30 grid place-items-center">🎵</div>
+              <div className="flex-1">
+                <p className="text-sm font-medium">Lo-fi & Ambient</p>
+                <p className="text-xs text-zinc-500">45 min · no vocals</p>
+              </div>
+              <button className="btn btn-secondary" onClick={()=>setIsPlaying(p=>!p)}>
+                {isPlaying ? "Pause" : "Play"}
+              </button>
+            </div>
+          </Dialog>
+
+          <!-- Bottom Nav -->
+          <div className="lg:hidden sticky bottom-0 border-t bg-white/80 dark:bg-zinc-900/80 backdrop-blur">
+            <div className="grid grid-cols-4 gap-1 p-2 max-w-3xl mx-auto">
+              <button className="btn btn-secondary rounded-2xl">Hub</button>
+              <button className="btn btn-ghost rounded-2xl" onClick={()=>setSendOpen(true)}>Pay</button>
+              <button className="btn btn-ghost rounded-2xl" onClick={()=>setOrderOpen(true)}>Services</button>
+              <button className="btn btn-ghost rounded-2xl" onClick={()=>toast("Profile coming soon")}>You</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Omnia/>);
+  </script>
+</body>
+</html>
