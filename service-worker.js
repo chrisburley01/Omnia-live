@@ -1,6 +1,15 @@
-const CACHE = "omnia-cache-v3";
-const BASE = "/Omnia-live/";
+const CACHE_NAME = "omnia-cache-v1";
+const OFFLINE_URL = "/Omnia-live/index.html";
+
+// Files to cache
 const ASSETS = [
-  BASE,
-  BASE + "index.html",
-  BASE + "manifest
+  "/Omnia-live/",
+  "/Omnia-live/index.html",
+  "/Omnia-live/manifest.json",
+  "/Omnia-live/icons/icon-192.png",
+  "/Omnia-live/icons/icon-512.png",
+  "/Omnia-live/icons/icon-180.png"
+];
+
+// Install — pre-cache files
+self.addEventListener("install
