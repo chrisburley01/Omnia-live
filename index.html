@@ -67,17 +67,17 @@
     </div>
   </header>
 
-  <!-- Hero / Input -->
-  <section class="max-w-3xl mx-auto px-4 pt-8">
-    <div class="text-center space-y-2">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass card text-xs text-white/80">
-        ⚡ AI that understands actions & answers
-      </div>
-      <h2 class="text-3xl sm:text-4xl font-semibold">Ask Omnia anything…</h2>
-      <p class="text-white/70 text-sm">Examples: <em>pay Ari 20 for lunch</em> • <em>ride to Heathrow at 8pm</em> • <em>order oat milk</em> • <em>weather in London</em></p>
-    </div>
+  <!-- Logo hero -->
+  <section class="max-w-3xl mx-auto px-4 pt-6 text-center">
+    <img src="/Omnia-live/omnia-logo.png" alt="Omnia Logo"
+         class="mx-auto w-28 h-28 rounded-2xl shadow-glow mb-3 object-cover"/>
+    <h2 class="text-3xl sm:text-4xl font-semibold">Ask Omnia anything…</h2>
+    <p class="text-white/70 text-sm mt-1">Examples: <em>pay Ari 20 for lunch</em> • <em>ride to Heathrow at 8pm</em> • <em>order oat milk</em> • <em>weather in London</em></p>
+  </section>
 
-    <form id="oracle" class="relative mt-6">
+  <!-- Oracle / input -->
+  <section class="max-w-3xl mx-auto px-4 mt-5">
+    <form id="oracle" class="relative">
       <div class="relative rounded-2xl glass card ringgrad shadow-glow">
         <div class="flex items-center gap-3 px-4 pt-3">
           <div class="w-8 h-8 rounded-xl bg-white/10 grid place-items-center">✨</div>
@@ -203,7 +203,7 @@
     };
     const thinking = (t='Omnia is thinking…') => { const el=bubble(`<div class="type-cursor text-white/80">${t}</div>`); return el.querySelector('.type-cursor'); };
 
-    /* ------------ In‑app search engine (DDG + Wikipedia) ------------ */
+    /* ------------ In‑app search engine (DDG + Wikipedia + Images) ------------ */
     async function omniaSearch(query){
       const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&t=omnia`;
       const wikiUrl = `https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(query)}&limit=3`;
@@ -237,7 +237,7 @@
       </div>`;
 
       const hits = wiki?.pages || wiki?.results || [];
-      if (hits.length) html += `<div class="mb-2">
+      if (hits.length) html += `<div class="mb-3">
         <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
         <div class="grid gap-2">
           ${hits.map(p=>{
@@ -258,6 +258,18 @@
           }).join('')}
         </div>
       </div>`;
+
+      /* Image grid via Unsplash Source (no key) */
+      const imgQ = encodeURIComponent(query);
+      const imgs = Array.from({length:6}).map((_,i)=>`
+        <img src="https://source.unsplash.com/400x300/?${imgQ}&sig=${i}" alt="${query}" class="w-full h-40 object-cover rounded-xl"/>
+      `).join('');
+      html += `
+        <div class="mb-2">
+          <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Images</div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${imgs}</div>
+        </div>
+      `;
 
       if (!html) html = `<div class="rounded-xl glass card p-3">No in‑app results found. Try a different query.</div>`;
       return html;
@@ -318,7 +330,7 @@
         return;
       }
 
-      // In‑app SEARCH (no Google redirect)
+      // In‑app SEARCH (cards)
       (async () => {
         const q = intent.text || '';
         const resultsHtml = await omniaSearch(q);
