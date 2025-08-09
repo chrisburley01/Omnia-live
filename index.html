@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="/Omnia-live/icons/icon-180.png">
   <meta name="theme-color" content="#0b0b0b"/>
 
-  <!-- Tailwind (CDN) -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -103,6 +103,57 @@
     <section id="feed" class="mt-6 space-y-4"></section>
   </main>
 
+  <!-- Modules (super app tiles with icons) -->
+  <section class="max-w-6xl mx-auto px-4 py-8">
+    <h3 class="text-sm uppercase tracking-wide text-white/60 mb-3">Omnia Modules</h3>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <button data-open="pay" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div><div><p class="font-semibold">Payments</p><p class="text-xs text-white/70">Send & request</p></div></div><span>›</span>
+      </button>
+      <button data-open="ride" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🚗</div><div><p class="font-semibold">Rides</p><p class="text-xs text-white/70">Book & track</p></div></div><span>›</span>
+      </button>
+      <button data-open="order" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🛒</div><div><p class="font-semibold">Groceries</p><p class="text-xs text-white/70">Smart list</p></div></div><span>›</span>
+      </button>
+      <button data-open="calendar" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">📆</div><div><p class="font-semibold">Calendar</p><p class="text-xs text-white/70">Agenda & reminders</p></div></div><span>›</span>
+      </button>
+      <button data-open="messages" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💬</div><div><p class="font-semibold">Messages</p><p class="text-xs text-white/70">Unified inbox</p></div></div><span>›</span>
+      </button>
+      <button data-open="media" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🎵</div><div><p class="font-semibold">Media</p><p class="text-xs text-white/70">Music & video</p></div></div><span>›</span>
+      </button>
+      <button data-open="health" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">❤️‍🩹</div><div><p class="font-semibold">Health</p><p class="text-xs text-white/70">Snapshot & goals</p></div></div><span>›</span>
+      </button>
+      <button data-open="smarthome" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🏠</div><div><p class="font-semibold">Smart Home</p><p class="text-xs text-white/70">Lights & devices</p></div></div><span>›</span>
+      </button>
+      <button data-open="bookings" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🧳</div><div><p class="font-semibold">Bookings</p><p class="text-xs text-white/70">Flights & hotels</p></div></div><span>›</span>
+      </button>
+      <button data-open="maps" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🗺️</div><div><p class="font-semibold">Maps</p><p class="text-xs text-white/70">Navigate</p></div></div><span>›</span>
+      </button>
+      <button data-open="id" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🪪</div><div><p class="font-semibold">ID & Passes</p><p class="text-xs text-white/70">Wallet</p></div></div><span>›</span>
+      </button>
+      <button data-open="files" class="tap glass card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🗂️</div><div><p class="font-semibold">Files</p><p class="text-xs text-white/70">Docs & notes</p></div></div><span>›</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Bottom Sheet -->
+  <div id="sheet" class="hidden fixed inset-0 z-50 bg-black/60 grid place-items-end">
+    <div class="w-full max-w-xl bg-slate-900 border-t border-white/10 p-4 rounded-t-2xl card">
+      <div id="sheetBody"></div>
+      <button id="closeSheet" class="w-full mt-4 h-11 rounded-xl glass card">Close</button>
+    </div>
+  </div>
+
   <!-- Install banner -->
   <div id="installBanner" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
     <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
@@ -147,7 +198,7 @@
     document.getElementById('installLater').onclick = ()=> document.getElementById('installBanner').classList.add('hidden');
 
     /* ====== Backend URL ====== */
-    // TODO: paste your Worker URL (no trailing slash), e.g. "https://omnia-search-xyz.workers.dev"
+    // PASTE your Worker URL (no trailing slash):
     const OMNIA_API = "https://YOUR-WORKER-SUBDOMAIN.workers.dev";
 
     /* ====== Local memory ====== */
@@ -166,9 +217,7 @@
       window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' });
       return wrap.querySelector('div');
     };
-    const typing = (text='Omnia is thinking…') => {
-      return bubble(`<span class="type-cursor text-white/80">${text}</span>`);
-    };
+    const typing = (text='Omnia is thinking…') => bubble(`<span class="type-cursor text-white/80">${text}</span>`);
 
     /* ====== Hints ====== */
     const qEl = document.getElementById('q'), hints = document.getElementById('hints');
@@ -200,62 +249,57 @@
       return {type:'search', text:s.replace(/^search\s+/i,'')};
     }
 
-    /* ====== Frontend calls your Worker ====== */
+    /* ====== Worker search with Sources row ====== */
     async function omniaSearch(query){
       try{
         const res = await fetch(`${OMNIA_API}/search?q=${encodeURIComponent(query)}`);
         if(!res.ok) throw new Error('API error');
         const data = await res.json();
 
+        // collect sources (unique domains)
+        const seen = new Set(), sources=[];
+        const add = (u) => { try{ const h=new URL(u).hostname.replace(/^www\./,''); if(!seen.has(h)) { seen.add(h); sources.push({host:h,url:u}); } }catch{} };
+        (data.links||[]).forEach(l=>add(l.url)); (data.wiki||[]).forEach(w=>add(w.url));
+        const srcHtml = sources.length ? `<div class="mt-2 text-xs text-white/60">Sources: ${sources.slice(0,5).map(s=>`<a class="underline" href="${s.url}" target="_blank" rel="noopener">${s.host}</a>`).join(' · ')}</div>` : '';
+
         let html = "";
 
         if (data.summary || data.abstract) {
-          html += `
-            <div class="mb-3">
-              <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Omnia Answer</div>
-              <div class="rounded-xl glass card p-3">${(data.summary || data.abstract).replace(/\n/g, "<br>")}</div>
-            </div>`;
+          html += `<div class="mb-3"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Omnia Answer</div>
+            <div class="rounded-xl glass card p-3">${(data.summary || data.abstract).replace(/\n/g, "<br>")}${srcHtml}</div></div>`;
         }
 
         if (data.links?.length) {
-          html += `<div class="mb-3">
-            <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Top results</div>
+          html += `<div class="mb-3"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Top results</div>
             <div class="grid gap-2">
-              ${data.links.slice(0,6).map(t => `
-                <a class="rounded-xl glass card p-3 block hover:bg-white/5"
-                   href="${t.url}" target="_blank" rel="noopener">
+              ${data.links.slice(0,6).map(t=>`
+                <a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${t.url}" target="_blank" rel="noopener">
                   <div class="font-medium">${t.title}</div>
                   <div class="text-xs text-white/60 mt-0.5">${t.host || ""}</div>
-                </a>`).join("")}
-            </div>
-          </div>`;
+                </a>`).join('')}
+            </div></div>`;
         }
 
         if (data.wiki?.length) {
-          html += `<div class="mb-3">
-            <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
+          html += `<div class="mb-3"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
             <div class="grid gap-2">
-              ${data.wiki.map(p => `
+              ${data.wiki.map(p=>`
                 <a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${p.url}" target="_blank" rel="noopener">
                   <div class="flex items-start gap-3">
-                    ${p.thumb ? `<img src="${p.thumb}" alt="" class="w-12 h-12 rounded-md object-cover"/>` : ``}
-                    <div>
-                      <div class="font-semibold leading-tight">${p.title}</div>
-                      ${p.description ? `<div class="text-sm text-white/70 mt-0.5">${p.description}</div>` : ``}
+                    ${p.thumb?`<img src="${p.thumb}" alt="" class="w-12 h-12 rounded-md object-cover"/>`:''}
+                    <div><div class="font-semibold leading-tight">${p.title}</div>
+                      ${p.description?`<div class="text-sm text-white/70 mt-0.5">${p.description}</div>`:''}
                     </div>
                   </div>
-                </a>`).join("")}
-            </div>
-          </div>`;
+                </a>`).join('')}
+            </div></div>`;
         }
 
         if (data.images?.length) {
-          html += `<div class="mb-2">
-            <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Images</div>
+          html += `<div class="mb-2"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Images</div>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              ${data.images.map(img => `<img src="${img.src}" alt="${img.alt}" class="w-full h-40 object-cover rounded-xl"/>`).join("")}
-            </div>
-          </div>`;
+              ${data.images.map(img=>`<img src="${img.src}" alt="${img.alt}" class="w-full h-40 object-cover rounded-xl"/>`).join('')}
+            </div></div>`;
         }
 
         if (!html) html = `<div class="rounded-xl glass card p-3">No in‑app results found. Try a different query.</div>`;
@@ -314,6 +358,132 @@
       qEl.value=''; renderHints('');
       act(parseIntent(text));
     });
+
+    /* ====== Bottom Sheet (modules) ====== */
+    const sheet = document.getElementById('sheet'), sheetBody = document.getElementById('sheetBody');
+    const openSheet = html => { sheetBody.innerHTML = html; sheet.classList.remove('hidden'); }
+    const closeSheet = () => sheet.classList.add('hidden');
+    document.getElementById('closeSheet').addEventListener('click', closeSheet);
+    sheet.addEventListener('click', (e)=>{ if(e.target===sheet) closeSheet(); });
+
+    function renderPay(preset={}){ openSheet(`
+      <h3 class="text-lg font-semibold">Send money</h3>
+      <p class="text-sm text-white/70 mb-3">OmniPay secure transfer</p>
+      <label class="text-xs text-white/60">Recipient</label>
+      <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username" value="${preset.to||contacts[0]}">
+      <label class="text-xs text-white/60">Amount</label>
+      <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${preset.amount||20}">
+      <label class="text-xs text-white/60">Note</label>
+      <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${preset.note||''}">
+      <div class="flex gap-2 mt-4">
+        <button id="sendNow" class="flex-1 h-11 rounded-xl bg-white text-black tap">Send</button>
+        <a id="sendPaypal" class="flex-1 h-11 rounded-xl glass card grid place-items-center tap" target="_blank">PayPal</a>
+      </div>
+    `);}
+    function renderRide(plan={}){ openSheet(`
+      <h3 class="text-lg font-semibold">Ride options</h3>
+      <p class="text-sm text-white/70 mb-3">Destination: <b>${plan.where||places[0]}</b> • When: <b>${plan.when||'soon'}</b></p>
+      <div class="grid gap-2">
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.where||places[0])}">Open in Google Maps</a>
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://m.uber.com/ul/">Open Uber</a>
+      </div>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black tap" id="bookRide">Book best option</button>
+    `);}
+    function renderOrder(item){ openSheet(`
+      <h3 class="text-lg font-semibold">Confirm order</h3>
+      <p class="text-sm text-white/70">Groceries in ~25 minutes.</p>
+      <ul class="list-disc ml-6 my-3 text-sm">
+        ${[...list.slice(0,3), item ? `+ ${item}` : ''].filter(Boolean).map(x=>`<li>${x}</li>`).join('')}
+      </ul>
+      <div class="grid gap-2">
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.amazon.co.uk/s?k=${encodeURIComponent(item||'oat milk eggs')}">Search Amazon</a>
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.google.com/search?q=${encodeURIComponent(item||'groceries near me')}">Search Google</a>
+      </div>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black tap" id="payOrder">Pay with OmniPay</button>
+    `);}
+    function renderCalendar(){ openSheet(`
+      <h3 class="text-lg font-semibold">Today</h3>
+      <div class="mt-2 space-y-2 text-sm">
+        <div class="flex items-center justify-between"><span>Client meeting</span><span>10:00</span></div>
+        <div class="flex items-center justify-between"><span>Anniversary dinner</span><span>19:00</span></div>
+        <div class="flex items-center justify-between"><span>Daily Planner AI</span><span>in 12 min</span></div>
+      </div>
+    `);}
+    function renderMessages(){ openSheet(`
+      <h3 class="text-lg font-semibold">Messages</h3>
+      <div class="mt-2 text-sm text-white/70">Unified inbox coming soon. Reply, email, SMS in one place.</div>
+    `);}
+    function renderMedia(){ openSheet(`
+      <h3 class="text-lg font-semibold">Evening wind‑down</h3>
+      <div class="flex items-center gap-3 mt-2">
+        <div class="w-12 h-12 rounded-xl bg-white/10 grid place-items-center">🎵</div>
+        <div class="flex-1"><div class="font-medium">Calm Focus</div><div class="text-sm text-white/70">Lo‑fi & ambient · 45 min</div></div>
+        <button class="h-10 px-3 rounded-xl bg-white text-black">Play</button>
+      </div>
+    `);}
+    function renderHealth(){ openSheet(`
+      <h3 class="text-lg font-semibold">Health snapshot</h3>
+      <div class="space-y-2 text-sm mt-2">
+        <div class="flex items-center justify-between"><span>Steps</span><span>7,420</span></div>
+        <div class="flex items-center justify-between"><span>Recovery</span><span>Good</span></div>
+      </div>
+    `);}
+    function renderSmartHome(){ openSheet(`
+      <h3 class="text-lg font-semibold">Smart Home</h3>
+      <div class="grid gap-2 mt-2">
+        <button class="h-11 rounded-xl glass card tap">🟡 Turn on living room lights</button>
+        <button class="h-11 rounded-xl glass card tap">🔒 Lock front door</button>
+        <button class="h-11 rounded-xl glass card tap">🌡️ Set thermostat to 20°C</button>
+      </div>
+    `);}
+    function renderBookings(){ openSheet(`
+      <h3 class="text-lg font-semibold">Bookings</h3>
+      <div class="text-sm text-white/70 mt-2">Search flights, hotels, trains in one view (coming soon).</div>
+    `);}
+    function renderMaps(){ openSheet(`
+      <h3 class="text-lg font-semibold">Maps</h3>
+      <div class="mt-2"><a class="underline" target="_blank" href="https://maps.google.com">Open Maps</a></div>
+    `);}
+    function renderID(){ openSheet(`
+      <h3 class="text-lg font-semibold">ID & Passes</h3>
+      <div class="text-sm text-white/70 mt-2">Store ID, boarding passes, and tickets securely.</div>
+    `);}
+    function renderFiles(){ openSheet(`
+      <h3 class="text-lg font-semibold">Files</h3>
+      <div class="text-sm text-white/70 mt-2">Docs, notes, and shared links (coming soon).</div>
+    `);}
+
+    // module click wiring
+    document.querySelectorAll('[data-open]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const m = btn.getAttribute('data-open');
+        ({pay:renderPay, ride:renderRide, order:renderOrder, calendar:renderCalendar, messages:renderMessages,
+          media:renderMedia, health:renderHealth, smarthome:renderSmartHome, bookings:renderBookings,
+          maps:renderMaps, id:renderID, files:renderFiles}[m])?.();
+      });
+    });
+
+    // sheet actions
+    sheet.addEventListener('click', (e)=>{
+      if (e.target.id === 'sendNow') {
+        const to = document.getElementById('payTo').value.trim();
+        const amt = parseFloat(document.getElementById('payAmt').value);
+        if (!to) return alert('Enter recipient');
+        if (!Number.isFinite(amt) || amt<=0) return alert('Enter valid amount');
+        bubble(`Sent €${amt.toFixed(2)} to ${to}`, false); closeSheet();
+        const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
+      }
+      if (e.target.id === 'payOrder') { bubble('Order paid • ETA ~25 min', false); closeSheet(); }
+      if (e.target.id === 'bookRide') { bubble('Ride booked • driver en route 🚗', false); closeSheet(); }
+      if (e.target.id === 'sendPaypal') {
+        const to = document.getElementById('payTo').value.trim().replace(/^@/,'');
+        const amt = document.getElementById('payAmt').value; e.target.href=`https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
+      }
+    });
+
+    /* ====== Search from Worker with Sources row is in omniaSearch() above ====== */
+
+    /* ====== Form submit already wired above ====== */
   </script>
 </body>
 </html>
