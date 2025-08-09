@@ -27,7 +27,7 @@
 
     /* Omnia icon vibe */
     .iconWrap{
-      width: 40px;height: 40px;border-radius: 12px;
+      width: 56px;height: 56px;border-radius: 16px;
       display:grid;place-items:center;
       background:
         radial-gradient(120% 120% at 0% 0%, rgba(124,158,255,.35), transparent 60%),
@@ -36,7 +36,7 @@
       border:1px solid rgba(255,255,255,.15);
       box-shadow: inset 0 10px 25px rgba(0,0,0,.25), 0 0 32px rgba(124,158,255,.25);
     }
-    .icon{ width:22px;height:22px; }
+    .icon{ width:26px;height:26px; }
 
     /* Image cards */
     .imgCard{position:relative;overflow:hidden}
@@ -47,6 +47,21 @@
     #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
       background:rgba(20,24,38,.95);color:#fff;border:1px solid rgba(255,255,255,.1);
       padding:.6rem .9rem;border-radius:.75rem;z-index:60;display:none}
+
+    /* --- Tiles --- */
+    .tile {
+      @apply glass rounded-2xl p-4 tap ripple;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      grid-template-rows: 1fr auto auto;
+      justify-items: center;
+      align-items: center;
+      text-align: center;
+      transition: transform .12s ease, background .15s ease, border-color .15s ease;
+    }
+    .tile:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); transform: translateY(-2px); }
+    .tile h4 { margin-top:.6rem; font-weight:600; }
+    .tile p  { font-size:.8rem; color:#cbd5e1; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -102,177 +117,155 @@
       </div>
     </section>
 
-    <!-- Modules -->
+    <!-- Tiles Modules -->
     <section class="max-w-6xl mx-auto px-4 py-8">
       <h3 class="text-sm uppercase tracking-wide text-gray-400 mb-3">Omnia Modules</h3>
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 
-        <!-- Payments -->
-        <button data-open="pay" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <rect x="3" y="5" width="18" height="14" rx="3" stroke="url(#g1)" stroke-width="1.8"/>
-                <rect x="6" y="10" width="12" height="1.8" rx="0.9" fill="url(#g1)"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Payments</p><p class="text-xs text-gray-300">Send & request</p></div>
-          </div><span>›</span>
+      <!-- 2 cols (mobile) · 3 cols (md) · 4 cols (lg) -->
+      <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+
+        <button data-open="pay" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <rect x="3" y="5" width="18" height="14" rx="3" stroke="url(#g1)" stroke-width="1.8"/>
+              <rect x="6" y="10" width="12" height="1.8" rx="0.9" fill="url(#g1)"/>
+            </svg>
+          </div>
+          <h4>Payments</h4>
+          <p>Send & request</p>
         </button>
 
-        <!-- Rides -->
-        <button data-open="ride" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M5 12l2-4h10l2 4" stroke="url(#g2)" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M4 16h16" stroke="url(#g2)" stroke-width="1.8" stroke-linecap="round"/>
-                <circle cx="7.5" cy="16" r="1.6" fill="url(#g2)"/><circle cx="16.5" cy="16" r="1.6" fill="url(#g2)"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Rides</p><p class="text-xs text-gray-300">Book & track</p></div>
-          </div><span>›</span>
+        <button data-open="ride" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M5 12l2-4h10l2 4" stroke="url(#g2)" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M4 16h16" stroke="url(#g2)" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="7.5" cy="16" r="1.6" fill="url(#g2)"/><circle cx="16.5" cy="16" r="1.6" fill="url(#g2)"/>
+            </svg>
+          </div>
+          <h4>Rides</h4>
+          <p>Book & track</p>
         </button>
 
-        <!-- Groceries -->
-        <button data-open="order" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M6 6h14l-1.2 8.5a3 3 0 0 1-3 2.5H9.5a3 3 0 0 1-3-2.5L6 6z" stroke="url(#g3)" stroke-width="1.8"/>
-                <path d="M9 6c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="url(#g3)" stroke-width="1.8"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Groceries</p><p class="text-xs text-gray-300">Smart list</p></div>
-          </div><span>›</span>
+        <button data-open="order" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M6 6h14l-1.2 8.5a3 3 0 0 1-3 2.5H9.5a3 3 0 0 1-3-2.5L6 6z" stroke="url(#g3)" stroke-width="1.8"/>
+              <path d="M9 6c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="url(#g3)" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <h4>Groceries</h4>
+          <p>Smart list</p>
         </button>
 
-        <!-- Calendar -->
-        <button data-open="calendar" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <rect x="4" y="5" width="16" height="14" rx="2" stroke="url(#g4)" stroke-width="1.8"/>
-                <path d="M4 9h16" stroke="url(#g4)" stroke-width="1.8"/>
-                <rect x="8" y="12" width="3" height="3" rx="0.8" fill="url(#g4)"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Calendar</p><p class="text-xs text-gray-300">Agenda & reminders</p></div>
-          </div><span>›</span>
+        <button data-open="calendar" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <rect x="4" y="5" width="16" height="14" rx="2" stroke="url(#g4)" stroke-width="1.8"/>
+              <path d="M4 9h16" stroke="url(#g4)" stroke-width="1.8"/>
+              <rect x="8" y="12" width="3" height="3" rx="0.8" fill="url(#g4)"/>
+            </svg>
+          </div>
+          <h4>Calendar</h4>
+          <p>Agenda & reminders</p>
         </button>
 
-        <!-- Messages -->
-        <button data-open="messages" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="url(#g5)" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M7 10h10" stroke="url(#g5)" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Messages</p><p class="text-xs text-gray-300">Unified inbox</p></div>
-          </div><span>›</span>
+        <button data-open="messages" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="url(#g5)" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M7 10h10" stroke="url(#g5)" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h4>Messages</h4>
+          <p>Unified inbox</p>
         </button>
 
-        <!-- Media -->
-        <button data-open="media" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <circle cx="12" cy="12" r="8" stroke="url(#g6)" stroke-width="1.8"/>
-                <path d="M10 9l6 3-6 3V9z" fill="url(#g6)"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Media</p><p class="text-xs text-gray-300">Music & video</p></div>
-          </div><span>›</span>
+        <button data-open="media" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <circle cx="12" cy="12" r="8" stroke="url(#g6)" stroke-width="1.8"/>
+              <path d="M10 9l6 3-6 3V9z" fill="url(#g6)"/>
+            </svg>
+          </div>
+          <h4>Media</h4>
+          <p>Music & video</p>
         </button>
 
-        <!-- Health -->
-        <button data-open="health" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g7" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M5 12c0-2.8 2.2-5 5-5 1.4 0 2.7.6 3.6 1.6A5 5 0 0 1 22 12c0 4.5-6.7 7-10 10-3.3-3-10-5.5-10-10z" stroke="url(#g7)" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Health</p><p class="text-xs text-gray-300">Snapshot & goals</p></div>
-          </div><span>›</span>
+        <button data-open="health" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g7" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M5 12c0-2.8 2.2-5 5-5 1.4 0 2.7.6 3.6 1.6A5 5 0 0 1 22 12c0 4.5-6.7 7-10 10-3.3-3-10-5.5-10-10z" stroke="url(#g7)" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4>Health</h4>
+          <p>Snapshot & goals</p>
         </button>
 
-        <!-- Smart Home -->
-        <button data-open="smarthome" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g8" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M4 10l8-6 8 6v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="url(#g8)" stroke-width="1.8" stroke-linejoin="round"/>
-                <rect x="10" y="13" width="4" height="5" rx="1" stroke="url(#g8)" stroke-width="1.8"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Smart Home</p><p class="text-xs text-gray-300">Lights & devices</p></div>
-          </div><span>›</span>
+        <button data-open="smarthome" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g8" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M4 10l8-6 8 6v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="url(#g8)" stroke-width="1.8" stroke-linejoin="round"/>
+              <rect x="10" y="13" width="4" height="5" rx="1" stroke="url(#g8)" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <h4>Smart Home</h4>
+          <p>Lights & devices</p>
         </button>
 
-        <!-- Bookings -->
-        <button data-open="bookings" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g9" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M3 13l18-6-6 18-3-7-7-5z" stroke="url(#g9)" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Bookings</p><p class="text-xs text-gray-300">Flights & hotels</p></div>
-          </div><span>›</span>
+        <button data-open="bookings" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g9" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M3 13l18-6-6 18-3-7-7-5z" stroke="url(#g9)" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4>Bookings</h4>
+          <p>Flights & hotels</p>
         </button>
 
-        <!-- Maps -->
-        <button data-open="maps" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g10" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" stroke="url(#g10)" stroke-width="1.8"/>
-                <circle cx="12" cy="10" r="2" fill="url(#g10)"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Maps</p><p class="text-xs text-gray-300">Navigate</p></div>
-          </div><span>›</span>
+        <button data-open="maps" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g10" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" stroke="url(#g10)" stroke-width="1.8"/>
+              <circle cx="12" cy="10" r="2" fill="url(#g10)"/>
+            </svg>
+          </div>
+          <h4>Maps</h4>
+          <p>Navigate</p>
         </button>
 
-        <!-- ID & Passes -->
-        <button data-open="id" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g11" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <rect x="4" y="6" width="16" height="12" rx="2" stroke="url(#g11)" stroke-width="1.8"/>
-                <circle cx="9" cy="12" r="2" stroke="url(#g11)" stroke-width="1.6"/>
-                <rect x="12.5" y="11" width="5" height="2" rx="1" fill="url(#g11)"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">ID & Passes</p><p class="text-xs text-gray-300">Wallet</p></div>
-          </div><span>›</span>
+        <button data-open="id" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g11" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <rect x="4" y="6" width="16" height="12" rx="2" stroke="url(#g11)" stroke-width="1.8"/>
+              <circle cx="9" cy="12" r="2" stroke="url(#g11)" stroke-width="1.6"/>
+              <rect x="12.5" y="11" width="5" height="2" rx="1" fill="url(#g11)"/>
+            </svg>
+          </div>
+          <h4>ID & Passes</h4>
+          <p>Wallet</p>
         </button>
 
-        <!-- Files -->
-        <button data-open="files" class="tap ripple glass p-4 rounded-xl flex items-center justify-between hover:bg-white/5">
-          <div class="flex items-center gap-3">
-            <div class="iconWrap">
-              <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                <path d="M4 7a2 2 0 0 1 2-2h5l3 3h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z" stroke="url(#g12)" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div><p class="font-semibold">Files</p><p class="text-xs text-gray-300">Docs & notes</p></div>
-          </div><span>›</span>
+        <button data-open="files" class="tile">
+          <div class="iconWrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+              <path d="M4 7a2 2 0 0 1 2-2h5l3 3h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z" stroke="url(#g12)" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4>Files</h4>
+          <p>Docs & notes</p>
         </button>
 
       </div>
@@ -303,21 +296,14 @@
   const $ = (s, r=document) => r.querySelector(s);
   const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
-  // Normalize possibly partial/redirecting image URLs (basic)
   function normalizeImgUrl(u){
     if (!u) return "";
     try {
-      // DuckDuckGo & Google proxy thumbs often return relative or redirector URLs.
-      // If it's protocol-relative, add https:
       if (u.startsWith("//")) return "https:" + u;
-      // If it's a data URL or http(s), return as is
       if (/^https?:|^data:/.test(u)) return u;
-      // Otherwise try to treat as absolute on https
       return new URL(u, "https://").href;
     } catch { return ""; }
   }
-
-  // Create a branded placeholder node
   function placeholderNode(alt="Image"){
     const wrap = document.createElement("div");
     wrap.className = "imgPh rounded-xl w-full h-40";
@@ -334,11 +320,8 @@
     wrap.setAttribute("aria-label", alt);
     return wrap;
   }
-
-  // Render a robust image grid
   function renderImages(arr){
     if (!arr?.length) return "";
-    // Build containers first; attach images after to hook onerror
     const container = document.createElement("div");
     container.className = "grid grid-cols-2 sm:grid-cols-3 gap-2";
     arr.forEach(img=>{
@@ -351,10 +334,10 @@
         const el = document.createElement("img");
         el.loading = "lazy";
         el.alt = img.alt || "Image result";
+        el.referrerPolicy = "no-referrer";
+        el.crossOrigin = "anonymous";
         el.src = src;
-        el.onerror = () => {
-          cell.replaceChildren(placeholderNode(el.alt));
-        };
+        el.onerror = () => { cell.replaceChildren(placeholderNode(el.alt)); };
         cell.appendChild(el);
       }
       container.appendChild(cell);
@@ -408,7 +391,6 @@
 
   askBtn.addEventListener("click", runSearch);
   qEl.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); runSearch(); } });
-  // Focus search with "/"
   window.addEventListener("keydown", e => { if (e.key === "/" && document.activeElement !== qEl) { e.preventDefault(); qEl.focus(); } });
 
   async function runSearch() {
@@ -420,7 +402,6 @@
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
 
-      // sources (unique domains)
       const seen = new Set(), src = [];
       const addSrc = (u)=>{ try{ const h=new URL(u).hostname.replace(/^www\./,''); if(!seen.has(h)){ seen.add(h); src.push({h,url:u}); } }catch{} };
       (data.links||[]).forEach(l=>addSrc(l.url)); (data.wiki||[]).forEach(w=>addSrc(w.url));
@@ -475,12 +456,12 @@
       }
 
       results.innerHTML = html || `<div class="glass p-4 rounded-xl">No results found for “${q}”.</div>`;
-    } catch (err) {
+    } catch {
       results.innerHTML = `<div class="glass p-4 rounded-xl">Couldn’t reach Omnia API. Check Worker URL and try again.</div>`;
     }
   }
 
-  /* ===== Bottom Sheet helpers ===== */
+  /* ===== Bottom Sheet helpers & simple modules ===== */
   const sheet = $("#sheet");
   const sheetBody = $("#sheetBody");
   const openSheet = (html)=>{ sheetBody.innerHTML = html; sheet.classList.remove("hidden"); };
@@ -488,20 +469,18 @@
   $("#closeSheet").addEventListener("click", closeSheet);
   sheet.addEventListener("click",(e)=>{ if(e.target===sheet) closeSheet(); });
 
-  // tiny local memory (demo state)
   const mem = { get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
   const contacts = mem.get("omnia:contacts", ["ari","bea","chen"]);
   const places = mem.get("omnia:places", ["Heathrow","Atocha Station"]);
   const list = mem.get("omnia:list", ["Oat milk","Eggs","Espresso pods"]);
 
-  /* ===== Module sheets ===== */
   function sheetPay(preset={}){ openSheet(`
     <h3 class="text-lg font-semibold">Send money</h3>
     <p class="text-sm text-gray-300 mb-3">OmniPay secure transfer</p>
     <label class="text-xs text-gray-400">Recipient</label>
     <input id="payTo" class="w-full h-11 rounded-lg bg-white/10 px-3 mb-3 text-white" placeholder="@username" value="${preset.to||contacts[0]}">
     <label class="text-xs text-gray-400">Amount</label>
-    <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-lg bg-white/10 px-3 mb-3 text-white" value="${preset.amount||20}">
+    <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-lg bg_white/10 px-3 mb-3 text-white" value="${preset.amount||20}">
     <label class="text-xs text-gray-400">Note</label>
     <input id="payNote" class="w-full h-11 rounded-lg bg-white/10 px-3 text-white" placeholder="What’s this for?" value="${preset.note||''}">
     <div class="flex gap-2 mt-4">
@@ -582,7 +561,7 @@
     <div class="text-sm text-gray-300 mt-2">Docs, notes, and shared links (coming soon).</div>
   `);}
 
-  $$("[data-open]").forEach(btn=>{
+  $$(".tile,[data-open]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const m = btn.getAttribute("data-open");
       ({pay:sheetPay, ride:sheetRide, order:sheetOrder, calendar:sheetCalendar, messages:sheetMessages,
@@ -592,7 +571,8 @@
   });
 
   // Sheet actions
-  sheet.addEventListener("click",(e)=>{
+  const sheetEl = $("#sheet");
+  sheetEl.addEventListener("click",(e)=>{
     if (e.target.id === "sendNow") {
       const to = $("#payTo").value.trim();
       const amt = parseFloat($("#payAmt").value);
@@ -618,7 +598,7 @@
   window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; installBtn.classList.remove("hidden"); });
   installBtn.addEventListener("click", async () => { installBtn.classList.add("hidden"); deferredPrompt?.prompt(); deferredPrompt = null; });
 
-  /* ===== Service Worker (offline + PWA) ===== */
+  /* ===== Service Worker ===== */
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("service-worker.js").catch(()=>{});
