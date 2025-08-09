@@ -1,489 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <title>Omnia — Ask anything. Omnia gets it done.</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="/Omnia-live/manifest.json"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/Omnia-live/icons/favicon-512.png">
-  <link rel="apple-touch-icon" href="/Omnia-live/icons/icon-180.png">
-  <meta name="theme-color" content="#0b0b0b"/>
-
-  <!-- Tailwind -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omnia — One App for Everything</title>
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
-          colors: { brand: { 500:'#7c9eff', 600:'#5b87ff' } },
-          boxShadow: {
-            glow: '0 0 0 2px rgba(124,158,255,.35), 0 0 42px rgba(124,158,255,.35)',
-            soft:'0 10px 30px rgba(0,0,0,.25)'
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <style>
-    *{ -webkit-tap-highlight-color:transparent }
-    body{ font-family:Inter,ui-sans-serif,system-ui; color:#fff; background:#0a0b10 }
-    .bg-omnia{ position:fixed; inset:0; z-index:-1;
-      background:
-        radial-gradient(1200px 800px at 20% -10%, rgba(124,158,255,.22), transparent 60%),
-        radial-gradient(900px 600px at 80% 0%, rgba(99,102,241,.18), transparent 60%),
-        linear-gradient(180deg, #0a0b10 0%, #06070a 100%) }
-    .glass{ background:rgba(255,255,255,.06); backdrop-filter:blur(12px) }
-    .card{ border:1px solid rgba(255,255,255,.10); border-radius:1rem }
-    .ringgrad{ box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), inset 0 0 0 6px rgba(124,158,255,.08) }
-    .type-cursor::after{ content:'▍'; opacity:.7; animation:blink 1s steps(1) infinite }
-    @keyframes blink{ 50%{ opacity:0 } }
-    .tap{ transition: transform .12s } .tap:active{ transform:scale(.98) }
+    body {
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      color: white;
+      font-family: system-ui, sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
   </style>
 </head>
-<body class="min-h-screen">
-  <div class="bg-omnia"></div>
-
-  <!-- Header with logo + tagline -->
-  <header class="sticky top-0 z-40 shadow-soft">
-    <div class="glass card" style="background:
-      linear-gradient(90deg, rgba(124,158,255,.12), rgba(14,165,233,.10) 45%, rgba(124,158,255,.06));
-      box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.35)">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-        <div class="relative">
-          <div class="absolute inset-0 rounded-2xl blur-xl opacity-60"
-               style="background:radial-gradient(60% 60% at 50% 50%, rgba(124,158,255,.45), transparent 70%)"></div>
-          <div class="relative w-11 h-11 rounded-2xl ring-1 ring-white/15 bg-white/5 grid place-items-center overflow-hidden">
-            <img src="/Omnia-live/omnia-logo.png" alt="Omnia" class="w-full h-full object-cover"/>
-          </div>
-        </div>
-        <div class="leading-tight">
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl font-semibold tracking-tight">Omnia</h1>
-            <span class="hidden sm:inline px-2 py-0.5 rounded-full text-[10px] bg-white/10">AI Super App</span>
-          </div>
-          <p class="text-[12px] text-white/70">Ask anything. Omnia gets it done.</p>
-        </div>
-        <div class="flex-1"></div>
-        <div class="hidden sm:flex gap-2 text-[11px]">
-          <span class="px-2 py-1 rounded-full glass card">Private</span>
-          <span class="px-2 py-1 rounded-full glass card">Unified ID</span>
-          <span class="px-2 py-1 rounded-full glass card">OmniPay</span>
-        </div>
+<body class="min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="flex items-center justify-between px-4 py-3 glass sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <img src="icons/icon-192.png" alt="Omnia Logo" class="w-10 h-10 rounded-lg" />
+      <div>
+        <h1 class="text-xl font-bold">Omnia</h1>
+        <p class="text-xs text-gray-300">Ask anything. Omnia gets it done.</p>
       </div>
     </div>
+    <button id="installBtn" class="px-3 py-1 bg-blue-500 rounded-lg text-sm hidden">Install</button>
   </header>
 
-  <!-- Chat area -->
-  <main class="max-w-3xl mx-auto px-4 pt-6">
-    <!-- Input -->
-    <form id="oracle" class="relative">
-      <div class="relative rounded-2xl glass card ringgrad shadow-glow">
-        <div class="flex items-center gap-3 px-4 pt-3">
-          <div class="w-8 h-8 rounded-xl bg-white/10 grid place-items-center">✨</div>
-          <div class="text-xs text-white/60">Ask Omnia…</div>
-          <div class="flex-1"></div>
-          <div class="hidden sm:block text-[10px] text-white/60">pay @ari 20 • ride to Atocha • order oat milk</div>
-        </div>
-        <div class="px-4 pb-3">
-          <input id="q" autocomplete="off" class="w-full h-14 bg-transparent outline-none text-base placeholder-white/50"
-                 placeholder="Type a request or question"/>
-        </div>
-      </div>
-      <div id="hints" class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div>
-      <button class="mt-4 w-full h-12 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 shadow-glow tap font-medium">Ask Omnia</button>
-    </form>
+  <!-- Search Bar -->
+  <main class="flex-1 max-w-3xl mx-auto w-full px-4 py-6">
+    <div class="flex gap-2 mb-6">
+      <input id="query" type="text" placeholder="Ask Omnia anything..."
+        class="flex-1 px-4 py-3 rounded-xl text-black" />
+      <button onclick="runSearch()" class="px-4 py-3 bg-blue-600 rounded-xl hover:bg-blue-500">Ask</button>
+    </div>
 
-    <!-- Chat feed -->
-    <section id="feed" class="mt-6 space-y-4"></section>
+    <!-- Results -->
+    <div id="results" class="space-y-4"></div>
   </main>
 
-  <!-- Modules (super app tiles with icons) -->
-  <section class="max-w-6xl mx-auto px-4 py-8">
-    <h3 class="text-sm uppercase tracking-wide text-white/60 mb-3">Omnia Modules</h3>
-    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <button data-open="pay" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div><div><p class="font-semibold">Payments</p><p class="text-xs text-white/70">Send & request</p></div></div><span>›</span>
-      </button>
-      <button data-open="ride" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🚗</div><div><p class="font-semibold">Rides</p><p class="text-xs text-white/70">Book & track</p></div></div><span>›</span>
-      </button>
-      <button data-open="order" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🛒</div><div><p class="font-semibold">Groceries</p><p class="text-xs text-white/70">Smart list</p></div></div><span>›</span>
-      </button>
-      <button data-open="calendar" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">📆</div><div><p class="font-semibold">Calendar</p><p class="text-xs text-white/70">Agenda & reminders</p></div></div><span>›</span>
-      </button>
-      <button data-open="messages" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💬</div><div><p class="font-semibold">Messages</p><p class="text-xs text-white/70">Unified inbox</p></div></div><span>›</span>
-      </button>
-      <button data-open="media" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🎵</div><div><p class="font-semibold">Media</p><p class="text-xs text-white/70">Music & video</p></div></div><span>›</span>
-      </button>
-      <button data-open="health" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">❤️‍🩹</div><div><p class="font-semibold">Health</p><p class="text-xs text-white/70">Snapshot & goals</p></div></div><span>›</span>
-      </button>
-      <button data-open="smarthome" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🏠</div><div><p class="font-semibold">Smart Home</p><p class="text-xs text-white/70">Lights & devices</p></div></div><span>›</span>
-      </button>
-      <button data-open="bookings" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🧳</div><div><p class="font-semibold">Bookings</p><p class="text-xs text-white/70">Flights & hotels</p></div></div><span>›</span>
-      </button>
-      <button data-open="maps" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🗺️</div><div><p class="font-semibold">Maps</p><p class="text-xs text-white/70">Navigate</p></div></div><span>›</span>
-      </button>
-      <button data-open="id" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🪪</div><div><p class="font-semibold">ID & Passes</p><p class="text-xs text-white/70">Wallet</p></div></div><span>›</span>
-      </button>
-      <button data-open="files" class="tap glass card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🗂️</div><div><p class="font-semibold">Files</p><p class="text-xs text-white/70">Docs & notes</p></div></div><span>›</span>
-      </button>
-    </div>
-  </section>
+  <!-- Footer -->
+  <footer class="text-center text-xs text-gray-500 py-4">
+    © 2025 Omnia. One app. Every part of your life.
+  </footer>
 
-  <!-- Bottom Sheet -->
-  <div id="sheet" class="hidden fixed inset-0 z-50 bg-black/60 grid place-items-end">
-    <div class="w-full max-w-xl bg-slate-900 border-t border-white/10 p-4 rounded-t-2xl card">
-      <div id="sheetBody"></div>
-      <button id="closeSheet" class="w-full mt-4 h-11 rounded-xl glass card">Close</button>
-    </div>
-  </div>
+<script>
+  const OMNIA_API = "https://ommia-search.chrisburley01.workers.dev";
 
-  <!-- Install banner -->
-  <div id="installBanner" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
-    <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">📲</div>
-      <div class="text-sm"><div class="font-semibold">Install Omnia</div><div class="text-white/70">Add to your home screen</div></div>
-      <div class="flex gap-2"><button id="installNow" class="px-3 py-2 rounded-xl bg-white text-black">Install</button><button id="installLater" class="px-3 py-2 rounded-xl glass card">Later</button></div>
-    </div>
-  </div>
+  async function runSearch() {
+    const q = document.getElementById("query").value.trim();
+    if (!q) return;
+    document.getElementById("results").innerHTML =
+      `<div class="glass p-4 rounded-xl">Searching for "${q}"...</div>`;
+    try {
+      const res = await fetch(`${OMNIA_API}/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      let html = "";
 
-  <!-- Update toast -->
-  <div id="updateToast" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
-    <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">⬆️</div>
-      <div class="text-sm"><div class="font-semibold">Update available</div><div class="text-white/70">Tap to refresh</div></div>
-      <button id="refreshApp" class="px-3 py-2 rounded-xl bg-white text-black">Refresh</button>
-    </div>
-  </div>
-
-  <script>
-    /* ====== PWA registration ====== */
-    let newWorker;
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/Omnia-live/service-worker.js').then(reg => {
-        reg.addEventListener('updatefound', () => {
-          newWorker = reg.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              document.getElementById('updateToast').classList.remove('hidden');
-            }
-          });
-        });
-      });
-      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
-    }
-    document.getElementById('refreshApp').onclick = () =>
-      navigator.serviceWorker?.controller?.postMessage({ type:'SKIP_WAITING' });
-
-    // A2HS
-    let deferredPrompt=null;
-    window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('installBanner').classList.remove('hidden'); });
-    document.getElementById('installNow').onclick = async () => { if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; document.getElementById('installBanner').classList.add('hidden'); };
-    document.getElementById('installLater').onclick = ()=> document.getElementById('installBanner').classList.add('hidden');
-
-    /* ====== Backend URL ====== */
-    // PASTE your Worker URL (no trailing slash):
-    const OMNIA_API = "https://YOUR-WORKER-SUBDOMAIN.workers.dev";
-
-    /* ====== Local memory ====== */
-    const mem = { get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
-    const contacts = mem.get('omnia:contacts', ['ari','bea','chen']);
-    const places = mem.get('omnia:places', ['Atocha Station','Heathrow']);
-    const list = mem.get('omnia:list', ['Oat milk','Eggs','Espresso pods']);
-
-    /* ====== UI helpers ====== */
-    const feed = document.getElementById('feed');
-    const bubble = (html, mine=false) => {
-      const wrap=document.createElement('div');
-      wrap.className= mine ? 'flex justify-end' : 'flex';
-      wrap.innerHTML = `<div class="max-w-[85%] ${mine?'bg-white text-black':'glass card'} px-4 py-3 rounded-2xl shadow-soft">${html}</div>`;
-      feed.append(wrap);
-      window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' });
-      return wrap.querySelector('div');
-    };
-    const typing = (text='Omnia is thinking…') => bubble(`<span class="type-cursor text-white/80">${text}</span>`);
-
-    /* ====== Hints ====== */
-    const qEl = document.getElementById('q'), hints = document.getElementById('hints');
-    const renderHints = (t='')=>{
-      const s=t.trim().toLowerCase(); const items=[];
-      if(!s){ items.push('pay @ari 20 for lunch','ride to Atocha at 7pm','order oat milk','weather in London','open maps','search dinner ideas'); }
-      else{
-        if ('pay'.startsWith(s)||s.startsWith('pay')) items.push(`pay @${contacts[0]} 20`);
-        if (s.includes('ride')) items.push(`ride to ${places[0]} at 7pm`);
-        if (s.includes('order')) items.push(`order ${list[0].toLowerCase()}`);
-        if (s.startsWith('open')) items.push('open maps');
-        items.push(`search ${t}`);
+      // Omnia Answer
+      if (data.summary || data.abstract) {
+        html += `
+          <div class="glass p-4 rounded-xl">
+            <div class="text-sm uppercase text-gray-400 mb-2">Omnia Answer</div>
+            <div>${(data.summary || data.abstract).replace(/\n/g, "<br>")}</div>
+            ${buildSources(data)}
+          </div>
+        `;
       }
-      hints.innerHTML = items.slice(0,6).map(v=>`<button class="rounded-xl glass card px-3 py-2 text-left tap" data-s="${v}">${v}</button>`).join('');
-      [...hints.querySelectorAll('[data-s]')].forEach(b=>b.onclick=()=>{ qEl.value=b.dataset.s; });
-    };
-    qEl.addEventListener('input', e=>renderHints(e.target.value)); renderHints();
 
-    /* ====== Intent parsing ====== */
-    function parseIntent(q){
-      const s=q.trim(); if(!s) return {type:'none'};
-      const pay = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
-      if (pay) return {type:'pay', to:pay[1], amount:parseFloat(pay[2].replace(',','.')), note:pay[3]||''};
-      const ride = s.match(/^ride\s+(?:to\s+)?(.+?)(?:\s+at\s+(.+))?$/i);
-      if (ride) return {type:'ride', where:ride[1], when:ride[2]||'soon'};
-      const order = s.match(/^order\s+(.+)$/i); if (order) return {type:'order', item:order[1]};
-      const weather = s.match(/^weather(?:\s+in\s+(.+))?/i); if (weather) return {type:'weather', where:weather[1]||'your area'};
-      const open = s.match(/^open\s+(.+)$/i); if (open) return {type:'open', target:open[1]};
-      return {type:'search', text:s.replace(/^search\s+/i,'')};
-    }
-
-    /* ====== Worker search with Sources row ====== */
-    async function omniaSearch(query){
-      try{
-        const res = await fetch(`${OMNIA_API}/search?q=${encodeURIComponent(query)}`);
-        if(!res.ok) throw new Error('API error');
-        const data = await res.json();
-
-        // collect sources (unique domains)
-        const seen = new Set(), sources=[];
-        const add = (u) => { try{ const h=new URL(u).hostname.replace(/^www\./,''); if(!seen.has(h)) { seen.add(h); sources.push({host:h,url:u}); } }catch{} };
-        (data.links||[]).forEach(l=>add(l.url)); (data.wiki||[]).forEach(w=>add(w.url));
-        const srcHtml = sources.length ? `<div class="mt-2 text-xs text-white/60">Sources: ${sources.slice(0,5).map(s=>`<a class="underline" href="${s.url}" target="_blank" rel="noopener">${s.host}</a>`).join(' · ')}</div>` : '';
-
-        let html = "";
-
-        if (data.summary || data.abstract) {
-          html += `<div class="mb-3"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Omnia Answer</div>
-            <div class="rounded-xl glass card p-3">${(data.summary || data.abstract).replace(/\n/g, "<br>")}${srcHtml}</div></div>`;
-        }
-
-        if (data.links?.length) {
-          html += `<div class="mb-3"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Top results</div>
-            <div class="grid gap-2">
-              ${data.links.slice(0,6).map(t=>`
-                <a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${t.url}" target="_blank" rel="noopener">
-                  <div class="font-medium">${t.title}</div>
-                  <div class="text-xs text-white/60 mt-0.5">${t.host || ""}</div>
-                </a>`).join('')}
-            </div></div>`;
-        }
-
-        if (data.wiki?.length) {
-          html += `<div class="mb-3"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
-            <div class="grid gap-2">
-              ${data.wiki.map(p=>`
-                <a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${p.url}" target="_blank" rel="noopener">
-                  <div class="flex items-start gap-3">
-                    ${p.thumb?`<img src="${p.thumb}" alt="" class="w-12 h-12 rounded-md object-cover"/>`:''}
-                    <div><div class="font-semibold leading-tight">${p.title}</div>
-                      ${p.description?`<div class="text-sm text-white/70 mt-0.5">${p.description}</div>`:''}
-                    </div>
+      // Wikipedia
+      if (data.wiki?.length) {
+        html += `<div>
+          <div class="text-sm uppercase text-gray-400 mb-2">From Wikipedia</div>
+          <div class="grid gap-3">
+            ${data.wiki.map(p => `
+              <a href="${p.url}" target="_blank" class="glass p-3 rounded-xl block hover:bg-white/5">
+                <div class="flex gap-3">
+                  ${p.thumb ? `<img src="${p.thumb}" class="w-12 h-12 rounded-lg object-cover" />` : ``}
+                  <div>
+                    <div class="font-semibold">${p.title}</div>
+                    <div class="text-xs text-gray-400">${p.description || ""}</div>
                   </div>
-                </a>`).join('')}
-            </div></div>`;
-        }
-
-        if (data.images?.length) {
-          html += `<div class="mb-2"><div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Images</div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              ${data.images.map(img=>`<img src="${img.src}" alt="${img.alt}" class="w-full h-40 object-cover rounded-xl"/>`).join('')}
-            </div></div>`;
-        }
-
-        if (!html) html = `<div class="rounded-xl glass card p-3">No in‑app results found. Try a different query.</div>`;
-        return html;
-      }catch(err){
-        return `<div class="rounded-xl glass card p-3">Couldn’t reach Omnia API. Check your Worker URL and try again.</div>`;
+                </div>
+              </a>
+            `).join("")}
+          </div>
+        </div>`;
       }
+
+      // Links
+      if (data.links?.length) {
+        html += `<div>
+          <div class="text-sm uppercase text-gray-400 mb-2">Top Results</div>
+          <div class="grid gap-2">
+            ${data.links.map(l => `
+              <a href="${l.url}" target="_blank" class="glass p-3 rounded-xl block hover:bg-white/5">
+                <div class="font-medium">${l.title}</div>
+                <div class="text-xs text-gray-400">${l.host}</div>
+              </a>
+            `).join("")}
+          </div>
+        </div>`;
+      }
+
+      // Images
+      if (data.images?.length) {
+        html += `<div>
+          <div class="text-sm uppercase text-gray-400 mb-2">Images</div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            ${data.images.map(img => `<img src="${img.src}" alt="${img.alt}" class="rounded-xl object-cover w-full h-40" />`).join("")}
+          </div>
+        </div>`;
+      }
+
+      if (!html) html = `<div class="glass p-4 rounded-xl">No results found for "${q}".</div>`;
+      document.getElementById("results").innerHTML = html;
+
+    } catch (err) {
+      document.getElementById("results").innerHTML =
+        `<div class="glass p-4 rounded-xl">Error: ${err.message}</div>`;
     }
+  }
 
-    /* ====== Actions ====== */
-    function act(intent){
-      const t = typing();
-      const done = (html, delay=280)=> setTimeout(()=> t.parentElement.innerHTML = html, delay);
-
-      if (intent.type==='pay'){
-        const {to, amount, note} = intent;
-        const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
-        done(`💸 Preparing to send <b>€${amount.toFixed(2)}</b> to <b>${to}</b>${note?` for <i>${note}</i>`:''}.
-             <a class="underline" href="https://paypal.me/" target="_blank">Open payment</a>`);
-        return;
-      }
-      if (intent.type==='ride'){
-        const {where, when} = intent; if (!places.includes(where)) { places.unshift(where); mem.set('omnia:places', places.slice(0,6)); }
-        const gm = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`;
-        done(`🚗 Ride plan → <b>${where}</b> <span class="text-white/70">(${when})</span><br>
-              <a class="underline" href="${gm}" target="_blank">Open Maps</a>`);
-        return;
-      }
-      if (intent.type==='order'){
-        if (!list.includes(intent.item)) { list.unshift(intent.item); mem.set('omnia:list', list.slice(0,12)); }
-        done(`🛒 Added <b>${intent.item}</b> to your list. <span class="text-white/70">Checkout coming soon.</span>`);
-        return;
-      }
-      if (intent.type==='weather'){
-        done(`🌤 Weather in <b>${intent.where}</b>: 22°C, light breeze. <span class="text-white/60">(demo)</span>`);
-        return;
-      }
-      if (intent.type==='open'){
-        done(`🧭 Opening <b>${intent.target}</b>… <span class="text-white/60">(demo)</span>`);
-        return;
-      }
-
-      // SEARCH via your Worker
-      (async ()=>{
-        const q = intent.text || '';
-        const res = await omniaSearch(q);
-        done(`<div class="text-sm mb-2">Here’s what I found for: <b>${q}</b></div>${res}`, 200);
-      })();
-    }
-
-    /* ====== Form submit ====== */
-    document.getElementById('oracle').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const text = qEl.value.trim(); if(!text) return;
-      bubble(text, true);
-      qEl.value=''; renderHints('');
-      act(parseIntent(text));
+  function buildSources(data) {
+    const urls = new Set();
+    const sources = [];
+    [...(data.links || []), ...(data.wiki || [])].forEach(item => {
+      try {
+        const u = new URL(item.url);
+        const host = u.hostname.replace(/^www\./, "");
+        if (!urls.has(host)) {
+          urls.add(host);
+          sources.push(`<a href="${item.url}" target="_blank" class="underline hover:opacity-80">${host}</a>`);
+        }
+      } catch {}
     });
+    return sources.length ? `<div class="mt-2 text-xs text-gray-400">Sources: ${sources.join(" · ")}</div>` : "";
+  }
 
-    /* ====== Bottom Sheet (modules) ====== */
-    const sheet = document.getElementById('sheet'), sheetBody = document.getElementById('sheetBody');
-    const openSheet = html => { sheetBody.innerHTML = html; sheet.classList.remove('hidden'); }
-    const closeSheet = () => sheet.classList.add('hidden');
-    document.getElementById('closeSheet').addEventListener('click', closeSheet);
-    sheet.addEventListener('click', (e)=>{ if(e.target===sheet) closeSheet(); });
-
-    function renderPay(preset={}){ openSheet(`
-      <h3 class="text-lg font-semibold">Send money</h3>
-      <p class="text-sm text-white/70 mb-3">OmniPay secure transfer</p>
-      <label class="text-xs text-white/60">Recipient</label>
-      <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username" value="${preset.to||contacts[0]}">
-      <label class="text-xs text-white/60">Amount</label>
-      <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${preset.amount||20}">
-      <label class="text-xs text-white/60">Note</label>
-      <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${preset.note||''}">
-      <div class="flex gap-2 mt-4">
-        <button id="sendNow" class="flex-1 h-11 rounded-xl bg-white text-black tap">Send</button>
-        <a id="sendPaypal" class="flex-1 h-11 rounded-xl glass card grid place-items-center tap" target="_blank">PayPal</a>
-      </div>
-    `);}
-    function renderRide(plan={}){ openSheet(`
-      <h3 class="text-lg font-semibold">Ride options</h3>
-      <p class="text-sm text-white/70 mb-3">Destination: <b>${plan.where||places[0]}</b> • When: <b>${plan.when||'soon'}</b></p>
-      <div class="grid gap-2">
-        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.where||places[0])}">Open in Google Maps</a>
-        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://m.uber.com/ul/">Open Uber</a>
-      </div>
-      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black tap" id="bookRide">Book best option</button>
-    `);}
-    function renderOrder(item){ openSheet(`
-      <h3 class="text-lg font-semibold">Confirm order</h3>
-      <p class="text-sm text-white/70">Groceries in ~25 minutes.</p>
-      <ul class="list-disc ml-6 my-3 text-sm">
-        ${[...list.slice(0,3), item ? `+ ${item}` : ''].filter(Boolean).map(x=>`<li>${x}</li>`).join('')}
-      </ul>
-      <div class="grid gap-2">
-        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.amazon.co.uk/s?k=${encodeURIComponent(item||'oat milk eggs')}">Search Amazon</a>
-        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.google.com/search?q=${encodeURIComponent(item||'groceries near me')}">Search Google</a>
-      </div>
-      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black tap" id="payOrder">Pay with OmniPay</button>
-    `);}
-    function renderCalendar(){ openSheet(`
-      <h3 class="text-lg font-semibold">Today</h3>
-      <div class="mt-2 space-y-2 text-sm">
-        <div class="flex items-center justify-between"><span>Client meeting</span><span>10:00</span></div>
-        <div class="flex items-center justify-between"><span>Anniversary dinner</span><span>19:00</span></div>
-        <div class="flex items-center justify-between"><span>Daily Planner AI</span><span>in 12 min</span></div>
-      </div>
-    `);}
-    function renderMessages(){ openSheet(`
-      <h3 class="text-lg font-semibold">Messages</h3>
-      <div class="mt-2 text-sm text-white/70">Unified inbox coming soon. Reply, email, SMS in one place.</div>
-    `);}
-    function renderMedia(){ openSheet(`
-      <h3 class="text-lg font-semibold">Evening wind‑down</h3>
-      <div class="flex items-center gap-3 mt-2">
-        <div class="w-12 h-12 rounded-xl bg-white/10 grid place-items-center">🎵</div>
-        <div class="flex-1"><div class="font-medium">Calm Focus</div><div class="text-sm text-white/70">Lo‑fi & ambient · 45 min</div></div>
-        <button class="h-10 px-3 rounded-xl bg-white text-black">Play</button>
-      </div>
-    `);}
-    function renderHealth(){ openSheet(`
-      <h3 class="text-lg font-semibold">Health snapshot</h3>
-      <div class="space-y-2 text-sm mt-2">
-        <div class="flex items-center justify-between"><span>Steps</span><span>7,420</span></div>
-        <div class="flex items-center justify-between"><span>Recovery</span><span>Good</span></div>
-      </div>
-    `);}
-    function renderSmartHome(){ openSheet(`
-      <h3 class="text-lg font-semibold">Smart Home</h3>
-      <div class="grid gap-2 mt-2">
-        <button class="h-11 rounded-xl glass card tap">🟡 Turn on living room lights</button>
-        <button class="h-11 rounded-xl glass card tap">🔒 Lock front door</button>
-        <button class="h-11 rounded-xl glass card tap">🌡️ Set thermostat to 20°C</button>
-      </div>
-    `);}
-    function renderBookings(){ openSheet(`
-      <h3 class="text-lg font-semibold">Bookings</h3>
-      <div class="text-sm text-white/70 mt-2">Search flights, hotels, trains in one view (coming soon).</div>
-    `);}
-    function renderMaps(){ openSheet(`
-      <h3 class="text-lg font-semibold">Maps</h3>
-      <div class="mt-2"><a class="underline" target="_blank" href="https://maps.google.com">Open Maps</a></div>
-    `);}
-    function renderID(){ openSheet(`
-      <h3 class="text-lg font-semibold">ID & Passes</h3>
-      <div class="text-sm text-white/70 mt-2">Store ID, boarding passes, and tickets securely.</div>
-    `);}
-    function renderFiles(){ openSheet(`
-      <h3 class="text-lg font-semibold">Files</h3>
-      <div class="text-sm text-white/70 mt-2">Docs, notes, and shared links (coming soon).</div>
-    `);}
-
-    // module click wiring
-    document.querySelectorAll('[data-open]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const m = btn.getAttribute('data-open');
-        ({pay:renderPay, ride:renderRide, order:renderOrder, calendar:renderCalendar, messages:renderMessages,
-          media:renderMedia, health:renderHealth, smarthome:renderSmartHome, bookings:renderBookings,
-          maps:renderMaps, id:renderID, files:renderFiles}[m])?.();
-      });
-    });
-
-    // sheet actions
-    sheet.addEventListener('click', (e)=>{
-      if (e.target.id === 'sendNow') {
-        const to = document.getElementById('payTo').value.trim();
-        const amt = parseFloat(document.getElementById('payAmt').value);
-        if (!to) return alert('Enter recipient');
-        if (!Number.isFinite(amt) || amt<=0) return alert('Enter valid amount');
-        bubble(`Sent €${amt.toFixed(2)} to ${to}`, false); closeSheet();
-        const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
-      }
-      if (e.target.id === 'payOrder') { bubble('Order paid • ETA ~25 min', false); closeSheet(); }
-      if (e.target.id === 'bookRide') { bubble('Ride booked • driver en route 🚗', false); closeSheet(); }
-      if (e.target.id === 'sendPaypal') {
-        const to = document.getElementById('payTo').value.trim().replace(/^@/,'');
-        const amt = document.getElementById('payAmt').value; e.target.href=`https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
-      }
-    });
-
-    /* ====== Search from Worker with Sources row is in omniaSearch() above ====== */
-
-    /* ====== Form submit already wired above ====== */
-  </script>
+  // Install banner
+  let deferredPrompt;
+  const installBtn = document.getElementById("installBtn");
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.remove("hidden");
+  });
+  installBtn.addEventListener("click", () => {
+    installBtn.classList.add("hidden");
+    deferredPrompt.prompt();
+    deferredPrompt = null;
+  });
+</script>
 </body>
 </html>
