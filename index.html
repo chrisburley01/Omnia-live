@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Omnia — One App for Everything</title>
-  <link rel="icon" href="icons/icon-192.png" />
+
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <meta name="theme-color" content="#0b0f1a"/>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body{background:radial-gradient(60rem 40rem at 20% -10%,#1e293b,#020617 60%),#020617;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif}
-    .glass{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1)}
+    body{background:radial-gradient(60rem 40rem at 20% -10%,#1e293b,#020617 60%),#020617;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif}
+    .glass{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1)}
     .btn{background:linear-gradient(90deg,#60a5fa,#6366f1);border-radius:.75rem;padding:.75rem 1rem}
     .pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:.75rem;padding:.25rem .5rem;font-size:.7rem}
     .tap{transition:transform .1s} .tap:active{transform:scale(.98)}
@@ -19,9 +24,10 @@
   <!-- Header -->
   <header class="glass sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-      <img src="icons/icon-192.png" alt="Omnia Logo" class="w-10 h-10 rounded-lg" />
-      <div>
-        <h1 class="text-xl font-bold leading-tight">Omnia</h1>
+      <!-- Logo file must exist at /omnia-logo.png (same folder as index.html) -->
+      <img src="omnia-logo.png" alt="Omnia Logo" class="w-10 h-10 rounded-lg object-cover" />
+      <div class="leading-tight">
+        <h1 class="text-xl font-bold">Omnia</h1>
         <p class="text-xs text-gray-300">Ask anything. Omnia gets it done.</p>
       </div>
       <div class="flex-1"></div>
@@ -39,9 +45,10 @@
     <section class="max-w-3xl mx-auto w-full px-4 pt-6">
       <!-- Search -->
       <div class="flex gap-2 mb-4">
-        <input id="query" type="text" placeholder="Ask Omnia anything…  (e.g., pay @ari 20 • ride to Heathrow at 8pm • order oat milk)"
+        <input id="query" type="text"
+               placeholder="Ask Omnia anything…  (e.g., pay @ari 20 • ride to Heathrow at 8pm • order oat milk)"
                class="flex-1 px-4 py-3 rounded-xl text-black" />
-        <button onclick="runSearch()" class="btn tap">Ask</button>
+        <button id="askBtn" class="btn tap">Ask</button>
       </div>
       <div id="results" class="space-y-4"></div>
     </section>
@@ -104,49 +111,52 @@
   </footer>
 
 <script>
-  /* ===== Backend URL (your Cloudflare Worker) ===== */
+  /* ===== Omnia backend (your Cloudflare Worker) ===== */
   const OMNIA_API = "https://ommia-search.chrisburley01.workers.dev";
 
-  /* ===== Search (Omnia in‑app) ===== */
+  /* ===== Search (in‑app) ===== */
+  const qEl = document.getElementById("query");
+  const askBtn = document.getElementById("askBtn");
+  const results = document.getElementById("results");
+  askBtn.addEventListener("click", runSearch);
+  qEl.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); runSearch(); } });
+
   async function runSearch() {
-    const q = document.getElementById("query").value.trim();
-    const out = document.getElementById("results");
+    const q = qEl.value.trim();
     if (!q) return;
-    out.innerHTML = `<div class="glass p-4 rounded-xl">Searching for “${q}”…</div>`;
+    results.innerHTML = `<div class="glass p-4 rounded-xl">Searching for “${q}”…</div>`;
     try {
       const res = await fetch(`${OMNIA_API}/search?q=${encodeURIComponent(q)}`);
       if (!res.ok) throw new Error("API error");
       const data = await res.json();
+
+      // sources (unique domains)
+      const seen = new Set(), src = [];
+      const addSrc = (u)=>{ try{ const h=new URL(u).hostname.replace(/^www\./,''); if(!seen.has(h)){ seen.add(h); src.push({h,url:u}); } }catch{} };
+      (data.links||[]).forEach(l=>addSrc(l.url)); (data.wiki||[]).forEach(w=>addSrc(w.url));
+      const sourcesRow = src.length ? `<div class="mt-2 text-xs text-gray-400">Sources: ${src.slice(0,5).map(s=>`<a href="${s.url}" target="_blank" class="underline hover:opacity-80">${s.h}</a>`).join(' · ')}</div>` : "";
+
       let html = "";
 
-      // Sources (unique domains)
-      const seen = new Set(); const src = [];
-      const addSrc = (url)=>{ try{ const h=new URL(url).hostname.replace(/^www\./,""); if(!seen.has(h)){seen.add(h); src.push({h,url});} }catch{} };
-      (data.links||[]).forEach(l=>addSrc(l.url)); (data.wiki||[]).forEach(w=>addSrc(w.url));
-      const sourcesRow = src.length ? `<div class="mt-2 text-xs text-gray-400">Sources: ${src.slice(0,5).map(s=>`<a href="${s.url}" target="_blank" class="underline hover:opacity-80">${s.h}</a>`).join(" · ")}</div>` : "";
-
-      // Omnia Answer
       if (data.summary || data.abstract) {
-        html += `
-          <div class="glass p-4 rounded-xl">
-            <div class="text-sm uppercase text-gray-400 mb-2">Omnia Answer</div>
-            <div>${(data.summary || data.abstract).replace(/\n/g, "<br>")}</div>
-            ${sourcesRow}
-          </div>`;
+        html += `<div class="glass p-4 rounded-xl">
+          <div class="text-sm uppercase text-gray-400 mb-2">Omnia Answer</div>
+          <div>${(data.summary || data.abstract).replace(/\n/g, "<br>")}</div>
+          ${sourcesRow}
+        </div>`;
       }
 
-      // Wikipedia
       if (data.wiki?.length) {
         html += `<div>
           <div class="text-sm uppercase text-gray-400 mb-2">From Wikipedia</div>
           <div class="grid gap-3">
-            ${data.wiki.map(p => `
+            ${data.wiki.map(p=>`
               <a href="${p.url}" target="_blank" class="glass p-3 rounded-xl block hover:bg-white/5">
                 <div class="flex gap-3">
-                  ${p.thumb ? `<img src="${p.thumb}" class="w-12 h-12 rounded-lg object-cover" />` : ``}
+                  ${p.thumb?`<img src="${p.thumb}" class="w-12 h-12 rounded-lg object-cover" />`:``}
                   <div>
                     <div class="font-semibold">${p.title}</div>
-                    <div class="text-xs text-gray-400">${p.description || ""}</div>
+                    <div class="text-xs text-gray-400">${p.description||""}</div>
                   </div>
                 </div>
               </a>`).join("")}
@@ -154,12 +164,11 @@
         </div>`;
       }
 
-      // Links
       if (data.links?.length) {
         html += `<div>
           <div class="text-sm uppercase text-gray-400 mb-2">Top Results</div>
           <div class="grid gap-2">
-            ${data.links.map(l => `
+            ${data.links.map(l=>`
               <a href="${l.url}" target="_blank" class="glass p-3 rounded-xl block hover:bg-white/5">
                 <div class="font-medium">${l.title}</div>
                 <div class="text-xs text-gray-400">${l.host}</div>
@@ -168,19 +177,18 @@
         </div>`;
       }
 
-      // Images
       if (data.images?.length) {
         html += `<div>
           <div class="text-sm uppercase text-gray-400 mb-2">Images</div>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            ${data.images.map(img => `<img src="${img.src}" alt="${img.alt}" class="rounded-xl object-cover w-full h-40" />`).join("")}
+            ${data.images.map(img=>`<img src="${img.src}" alt="${img.alt}" class="rounded-xl object-cover w-full h-40" />`).join("")}
           </div>
         </div>`;
       }
 
-      out.innerHTML = html || `<div class="glass p-4 rounded-xl">No results found for “${q}”.</div>`;
+      results.innerHTML = html || `<div class="glass p-4 rounded-xl">No results found for “${q}”.</div>`;
     } catch (err) {
-      out.innerHTML = `<div class="glass p-4 rounded-xl">Couldn’t reach Omnia API. Check Worker URL and try again.</div>`;
+      results.innerHTML = `<div class="glass p-4 rounded-xl">Couldn’t reach Omnia API. Check Worker URL and try again.</div>`;
     }
   }
 
@@ -192,11 +200,8 @@
   document.getElementById("closeSheet").addEventListener("click", closeSheet);
   sheet.addEventListener("click",(e)=>{ if(e.target===sheet) closeSheet(); });
 
-  // Simple local memory for demo personalization
-  const mem = {
-    get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} },
-    set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} }
-  };
+  // tiny local memory
+  const mem = { get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
   const contacts = mem.get("omnia:contacts", ["ari","bea","chen"]);
   const places = mem.get("omnia:places", ["Heathrow","Atocha Station"]);
   const list = mem.get("omnia:list", ["Oat milk","Eggs","Espresso pods"]);
@@ -289,7 +294,6 @@
     <div class="text-sm text-gray-300 mt-2">Docs, notes, and shared links (coming soon).</div>
   `);}
 
-  // Open module sheets
   document.querySelectorAll("[data-open]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const m = btn.getAttribute("data-open");
@@ -299,7 +303,7 @@
     });
   });
 
-  // Sheet action buttons
+  // Sheet actions
   sheet.addEventListener("click",(e)=>{
     if (e.target.id === "sendNow") {
       const to = document.getElementById("payTo").value.trim();
@@ -307,13 +311,13 @@
       if (!to) return alert("Enter recipient");
       if (!Number.isFinite(amt) || amt<=0) return alert("Enter valid amount");
       alert(`Sent €${amt.toFixed(2)} to ${to}`);
-      // save contact
       const clean = to.replace(/^@/,'');
-      if (!contacts.includes(clean)) { contacts.unshift(clean); mem.set("omnia:contacts", contacts.slice(0,6)); }
-      closeSheet();
+      const contacts = JSON.parse(localStorage.getItem("omnia:contacts")||"[]");
+      if (!contacts.includes(clean)) { contacts.unshift(clean); localStorage.setItem("omnia:contacts", JSON.stringify(contacts.slice(0,6))); }
+      document.getElementById("closeSheet").click();
     }
-    if (e.target.id === "payOrder") { alert("Order paid • ETA ~25 min"); closeSheet(); }
-    if (e.target.id === "bookRide") { alert("Ride booked • driver en route 🚗"); closeSheet(); }
+    if (e.target.id === "payOrder") { alert("Order paid • ETA ~25 min"); document.getElementById("closeSheet").click(); }
+    if (e.target.id === "bookRide") { alert("Ride booked • driver en route 🚗"); document.getElementById("closeSheet").click(); }
     if (e.target.id === "sendPaypal") {
       const to = document.getElementById("payTo").value.trim().replace(/^@/,'');
       const amt = document.getElementById("payAmt").value;
@@ -321,7 +325,7 @@
     }
   });
 
-  /* ===== PWA install (Add to Home Screen) ===== */
+  /* ===== Install (A2HS) ===== */
   let deferredPrompt; const installBtn = document.getElementById("installBtn");
   window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; installBtn.classList.remove("hidden"); });
   installBtn.addEventListener("click", async () => { installBtn.classList.add("hidden"); deferredPrompt?.prompt(); deferredPrompt = null; });
