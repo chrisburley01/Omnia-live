@@ -2,160 +2,123 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Omnia — Super App</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Omnia — AI Assistant</title>
 
-  <!-- PWA (absolute paths for GitHub Pages) -->
+  <!-- PWA (GitHub Pages absolute paths) -->
   <link rel="manifest" href="/Omnia-live/manifest.json" />
   <link rel="apple-touch-icon" href="/Omnia-live/icons/icon-180.png" />
   <meta name="theme-color" content="#0b0b0b" />
 
-  <!-- Tailwind -->
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config = { theme:{ extend:{ colors:{ brand:{500:'#6366f1'} } } } }</script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          boxShadow: {
+            glow: "0 0 0 2px rgba(99,102,241,.25), 0 0 30px rgba(99,102,241,.35)",
+          },
+          colors: {
+            brand: { 500: "#6366f1", 400: "#818cf8" },
+          },
+        },
+      },
+    };
+  </script>
 
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(8px); }
-    .sheet { position: fixed; inset: 0; display: grid; place-items: end; z-index: 50; background: rgba(0,0,0,.55); }
-    .dialog { width: 100%; max-width: 680px; border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+    .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(10px); }
+    .gradient-ring {
+      position: relative;
+      border-radius: 16px;
+      background: radial-gradient(1200px 200px at 50% 0%,
+        rgba(99,102,241,.25), transparent 60%);
+    }
+    .type-cursor::after { content: '▍'; animation: blink 1s steps(1) infinite; opacity: .7; }
+    @keyframes blink { 50% { opacity: 0; } }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-b from-slate-900 to-black text-white">
-  <!-- Header -->
+
+<body class="min-h-screen bg-gradient-to-b from-[#0b0b0f] to-black text-white">
+  <!-- Top bar -->
   <header class="sticky top-0 z-40 glass border-b border-white/10">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-      <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500/30 to-indigo-500/30 grid place-items-center">✨</div>
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500/25 to-brand-500/25 grid place-items-center">✨</div>
       <div class="leading-tight">
-        <h1 class="text-xl font-semibold">Omnia</h1>
-        <p class="text-xs text-white/60">One app. Every part of your life.</p>
+        <h1 class="text-lg font-semibold">Omnia</h1>
+        <p class="text-[11px] text-white/60">Ask anything. Omnia gets it done.</p>
       </div>
       <div class="flex-1"></div>
-      <span class="hidden md:flex gap-2">
-        <span class="px-2 py-1 text-xs rounded-full bg-white/10">Private by default</span>
-        <span class="px-2 py-1 text-xs rounded-full bg-white/10">Unified ID</span>
-        <span class="px-2 py-1 text-xs rounded-full bg-white/10">OmniPay</span>
-      </span>
+      <div class="hidden sm:flex gap-2">
+        <span class="px-2 py-1 text-[11px] rounded-full bg-white/10">Private</span>
+        <span class="px-2 py-1 text-[11px] rounded-full bg-white/10">Unified ID</span>
+        <span class="px-2 py-1 text-[11px] rounded-full bg-white/10">OmniPay</span>
+      </div>
     </div>
   </header>
 
-  <!-- Universal Search -->
-  <section class="max-w-6xl mx-auto px-4 mt-5">
-    <form id="intentForm" class="relative">
-      <input id="intentInput" autocomplete="off"
-        placeholder="Try: pay Ari 20 for lunch • ride to Atocha at 7pm • order oat milk"
-        class="w-full h-12 rounded-xl pl-4 pr-12 bg-white/10 border border-white/10 placeholder:white/50 outline-none" />
-      <button class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 rounded-lg bg-white/10">Go</button>
-    </form>
-  </section>
-
-  <!-- Main content -->
-  <main class="max-w-6xl mx-auto px-4 py-6 grid gap-6 lg:grid-cols-3">
-    <!-- Left -->
-    <div class="lg:col-span-2 grid gap-6">
-      <!-- Life Hub -->
-      <div class="rounded-2xl border border-white/10 glass">
-        <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-          <h2 class="text-lg font-semibold">Life Hub</h2><span class="text-sm text-white/60">Today</span>
-        </div>
-        <div class="p-4 divide-y divide-white/5 text-sm">
-          <div class="flex items-center justify-between py-3">
-            <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">📅</div><span>Client meeting</span></div>
-            <span class="text-white/60">10:00</span>
-          </div>
-          <div class="flex items-center justify-between py-3">
-            <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">🔔</div><span>Anniversary dinner</span></div>
-            <span class="text-white/60">19:00</span>
-          </div>
-          <div class="flex items-center justify-between py-3">
-            <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">✨</div><span>Daily Planner AI</span></div>
-            <span class="text-white/60">in 12 min</span>
-          </div>
-        </div>
+  <!-- Hero + Input -->
+  <section class="max-w-5xl mx-auto px-4 pt-8 gradient-ring">
+    <div class="text-center space-y-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70">
+        <span>⚡</span> Omnia understands tasks & questions
       </div>
-
-      <!-- Modules -->
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <button id="modPay"  class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
-          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div><div><p class="font-semibold">Payments</p><p class="text-xs text-white/60">Send & request</p></div></div><span>›</span>
-        </button>
-        <button id="modRide" class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
-          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🚗</div><div><p class="font-semibold">Rides</p><p class="text-xs text-white/60">Book & track</p></div></div><span>›</span>
-        </button>
-        <button id="modOrder"class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
-          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🛒</div><div><p class="font-semibold">Groceries</p><p class="text-xs text-white/60">Smart list</p></div></div><span>›</span>
-        </button>
-        <button class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💬</div><div><p class="font-semibold">Messages</p><p class="text-xs text-white/60">Unified inbox</p></div></div><span>›</span></button>
-        <button class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🎵</div><div><p class="font-semibold">Media</p><p class="text-xs text-white/60">Music & video</p></div></div><span>›</span></button>
-        <button class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💓</div><div><p class="font-semibold">Health</p><p class="text-xs text-white/60">Snapshot</p></div></div><span>›</span></button>
-      </div>
+      <h2 class="text-2xl sm:text-3xl font-semibold">Ask Omnia anything…</h2>
+      <p class="text-white/60 text-sm">Examples: <em>pay Ari 20 for lunch</em> • <em>ride to Heathrow at 8pm</em> • <em>order oat milk</em></p>
     </div>
 
-    <!-- Right -->
-    <div class="grid gap-6">
-      <!-- Wallet -->
-      <div class="rounded-2xl border border-white/10 glass">
-        <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-          <h3 class="font-semibold">OmniPay Wallet</h3><span class="text-xs px-2 py-1 rounded-full bg-white/10">Secure</span>
-        </div>
-        <div class="p-4">
-          <div class="flex items-end justify-between">
-            <div><p class="text-white/60 text-sm">Available Balance</p><p class="text-3xl font-bold">€1,284.40</p></div>
-            <div class="flex gap-2">
-              <button id="btnSend" class="px-3 py-2 rounded-xl bg-white/10 active:scale-95">Send</button>
-              <button id="btnPay"  class="px-3 py-2 rounded-xl bg-white text-black active:scale-95">Pay</button>
-            </div>
-          </div>
-          <div class="mt-4 text-sm">
-            <div class="flex items-center justify-between"><span>Budget — August</span><span>62%</span></div>
-            <div class="h-2 rounded bg-white/10 mt-2 overflow-hidden"><div class="h-full bg-white" style="width:62%"></div></div>
-          </div>
-        </div>
-      </div>
+    <div class="mt-5 relative">
+      <form id="intentForm" class="relative">
+        <input id="intentInput" autocomplete="off"
+          class="w-full h-14 rounded-2xl pl-5 pr-28 bg-white/10 border border-white/10 placeholder-white/50 outline-none shadow-glow focus:shadow-glow"
+          placeholder="Type a request or question…">
+        <button class="absolute right-2 top-1/2 -translate-y-1/2 h-10 px-4 rounded-xl bg-white text-black font-medium">
+          Ask
+        </button>
+      </form>
 
-      <!-- Ride -->
-      <div class="rounded-2xl border border-white/10 glass p-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2"><span class="text-lg">🚗</span><h4 class="font-semibold">Ride to next event</h4></div>
-          <span class="px-2 py-1 rounded-full bg-white/10 text-xs">ETA 7 min</span>
-        </div>
-        <div class="flex items-center gap-3 mt-3">
-          <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">📍</div>
-          <div class="flex-1"><p class="text-sm">14 Calle de Velázquez → Atocha Station</p><p class="text-xs text-white/60">Auto‑booked from calendar</p></div>
-          <button id="btnRide" class="px-3 py-2 rounded-xl bg-white text-black active:scale-95">Open</button>
-        </div>
+      <!-- suggestions -->
+      <div id="suggestions" class="hidden absolute mt-2 w-full rounded-xl glass border border-white/10 overflow-hidden">
+        <button data-s="pay Ari 20 for lunch" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">💳 Pay Ari 20 for lunch</button>
+        <button data-s="ride to Atocha at 7pm" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">🚗 Ride to Atocha at 7pm</button>
+        <button data-s="order oat milk and eggs" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">🛒 Order oat milk and eggs</button>
+        <button data-s="what's the weather tomorrow in London?" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">🌦️ Weather tomorrow in London?</button>
       </div>
+    </div>
+  </section>
 
-      <!-- Groceries -->
-      <div class="rounded-2xl border border-white/10 glass p-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2"><span class="text-lg">🛒</span><h4 class="font-semibold">Meal & Groceries</h4></div>
-          <span class="px-2 py-1 rounded-full bg-white/10 text-xs">Smart List</span>
-        </div>
-        <ul class="list-disc ml-6 mt-3 text-sm space-y-1">
-          <li>Salmon, spinach, lemon</li><li>Oat milk, espresso pods</li><li>Birthday candles 🎂</li>
-        </ul>
-        <div class="mt-3 flex gap-2">
-          <button id="btnOrder" class="px-3 py-2 rounded-xl bg-white/10 active:scale-95">Order</button>
-          <button class="px-3 py-2 rounded-xl bg-white/0 border border-white/10 active:scale-95">Add item</button>
-        </div>
-      </div>
+  <!-- Chat / Results -->
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    <div id="thread" class="space-y-4"></div>
+
+    <!-- Quick actions -->
+    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <button class="glass border border-white/10 rounded-xl p-4 text-left hover:bg-white/5" id="qaPay">
+        <div class="text-2xl mb-1">💳</div>
+        <div class="font-medium">Send money</div>
+        <div class="text-xs text-white/60">OmniPay quick transfer</div>
+      </button>
+      <button class="glass border border-white/10 rounded-xl p-4 text-left hover:bg-white/5" id="qaRide">
+        <div class="text-2xl mb-1">🚗</div>
+        <div class="font-medium">Book a ride</div>
+        <div class="text-xs text-white/60">Maps / Uber deeplink</div>
+      </button>
+      <button class="glass border border-white/10 rounded-xl p-4 text-left hover:bg-white/5" id="qaOrder">
+        <div class="text-2xl mb-1">🛒</div>
+        <div class="font-medium">Order groceries</div>
+        <div class="text-xs text-white/60">Smart shopping list</div>
+      </button>
     </div>
   </main>
 
-  <!-- Bottom nav -->
-  <nav class="lg:hidden sticky bottom-0 glass border-t border-white/10">
-    <div class="grid grid-cols-4 gap-1 p-2 max-w-3xl mx-auto">
-      <button class="px-3 py-2 rounded-2xl bg-white/10">Hub</button>
-      <button class="px-3 py-2 rounded-2xl" id="navPay">Pay</button>
-      <button class="px-3 py-2 rounded-2xl" id="navRide">Services</button>
-      <button class="px-3 py-2 rounded-2xl">You</button>
-    </div>
-  </nav>
-
   <!-- Bottom Sheet -->
-  <div id="sheet" class="hidden sheet" aria-hidden="true">
-    <div class="dialog bg-slate-900 border-t border-white/10 p-4">
+  <div id="sheet" class="hidden fixed inset-0 z-50 bg-black/60 grid place-items-end">
+    <div class="w-full max-w-xl bg-slate-900 border-t border-white/10 p-4 rounded-t-2xl">
       <div id="sheetBody"></div>
       <button id="closeSheet" class="w-full mt-4 h-11 rounded-xl bg-white/10">Close</button>
     </div>
@@ -186,131 +149,212 @@
   </div>
 
   <script>
-    // Register service worker (absolute path for GH Pages)
+    // --- Service worker (updates toast) ---
     let newWorker;
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/Omnia-live/service-worker.js').then(reg => {
-        reg.addEventListener('updatefound', () => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/Omnia-live/service-worker.js").then((reg) => {
+        reg.addEventListener("updatefound", () => {
           newWorker = reg.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              document.getElementById('updateToast').classList.remove('hidden');
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              document.getElementById("updateToast").classList.remove("hidden");
             }
           });
         });
       });
-      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+      navigator.serviceWorker.addEventListener("controllerchange", () => location.reload());
+    }
+    document.getElementById("refreshApp").onclick = () => {
+      if (navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: "SKIP_WAITING" });
+      }
+    };
+
+    // --- Install banner ---
+    let deferredPrompt = null;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault(); deferredPrompt = e;
+      document.getElementById("installBanner").classList.remove("hidden");
+    });
+    document.getElementById("installNow").onclick = async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null;
+      document.getElementById("installBanner").classList.add("hidden");
+    };
+    document.getElementById("installLater").onclick = () =>
+      document.getElementById("installBanner").classList.add("hidden");
+
+    // --- Simple local memory ---
+    const memory = JSON.parse(localStorage.getItem("omnia:mem") || "{}");
+    const saveMem = () => localStorage.setItem("omnia:mem", JSON.stringify(memory));
+
+    // --- Helpers ---
+    const thread = document.getElementById("thread");
+    const sheet = document.getElementById("sheet");
+    const sheetBody = document.getElementById("sheetBody");
+    const openSheet = (html) => { sheetBody.innerHTML = html; sheet.classList.remove("hidden"); };
+    const closeSheet = () => sheet.classList.add("hidden");
+    document.getElementById("closeSheet").addEventListener("click", closeSheet);
+    sheet.addEventListener("click", (e) => { if (e.target === sheet) closeSheet(); });
+
+    function msgMine(text) {
+      const el = document.createElement("div");
+      el.className = "flex justify-end";
+      el.innerHTML = `<div class="max-w-[85%] rounded-2xl bg-white text-black px-4 py-3">${text}</div>`;
+      thread.appendChild(el);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+    function msgBot(text, thinking=false) {
+      const el = document.createElement("div");
+      el.className = "flex";
+      el.innerHTML = `<div class="max-w-[85%] rounded-2xl glass border border-white/10 px-4 py-3">
+        <div class="${thinking ? 'type-cursor' : ''}" id="botText">${thinking ? 'Omnia is thinking…' : text}</div>
+      </div>`;
+      thread.appendChild(el);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      return el.querySelector("#botText");
     }
 
-    // Install banner (A2HS)
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installBanner').classList.remove('hidden');
-    });
-    document.getElementById('installNow').onclick = async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      document.getElementById('installBanner').classList.add('hidden');
-    };
-    document.getElementById('installLater').onclick = () =>
-      document.getElementById('installBanner').classList.add('hidden');
-
-    // Update toast: tell SW to skipWaiting, then auto-reload via controllerchange
-    document.getElementById('refreshApp').onclick = () => {
-      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
-      }
-    };
-
-    // Helpers: sheet + intents
-    const sheet = document.getElementById('sheet');
-    const sheetBody = document.getElementById('sheetBody');
-    const openSheet = (html) => { sheetBody.innerHTML = html; sheet.classList.remove('hidden'); }
-    const closeSheet = () => sheet.classList.add('hidden');
-    document.getElementById('closeSheet').addEventListener('click', closeSheet);
-    sheet.addEventListener('click', (e)=>{ if(e.target===sheet) closeSheet(); });
-
-    const parseIntent = (q) => {
-      const s = q.trim().toLowerCase(); if (!s) return {type:'none'};
-      if (s.startsWith('pay ')) {
-        const m = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
-        if (m) return {type:'pay', to:m[1], amount:parseFloat(m[2].replace(',','.')), note:m[3]||''};
-        return {type:'pay-lite'};
-      }
+    // --- Intent parsing ---
+    function parseIntent(q) {
+      const s = q.trim();
+      if (!s) return { type: "none" };
+      // pay <who> <amount> [for <note>]
+      const pay = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
+      if (pay) return { type: "pay", to: pay[1], amount: parseFloat(pay[2].replace(",",".")), note: pay[3]||"" };
       const ride = s.match(/^ride\s+(?:to\s+)?(.+?)(?:\s+at\s+(.+))?$/i);
-      if (ride) return {type:'ride', where:ride[1], when:ride[2]||'soon'};
-      const ord = s.match(/^order\s+(.+)$/i);
-      if (ord) return {type:'order', item:ord[1]};
-      return {type:'search', text:s};
-    };
+      if (ride) return { type: "ride", where: ride[1], when: ride[2] || "soon" };
+      const order = s.match(/^order\s+(.+)$/i);
+      if (order) return { type: "order", item: order[1] };
+      const weather = s.match(/^weather(?:\s+in\s+(.+))?(?:\s+tomorrow)?\??$/i);
+      if (weather) return { type: "weather", where: weather[1] || memory.city || "your area" };
+      return { type: "question", text: s };
+    }
 
-    const renderPay = (preset={}) => openSheet(`
-      <h3 class="text-lg font-semibold">Send money</h3>
-      <p class="text-sm text-white/60 mb-3">Transfer instantly with OmniPay.</p>
-      <label class="text-xs text-white/60">Recipient</label>
-      <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username or IBAN" value="${preset.to||''}">
-      <label class="text-xs text-white/60">Amount</label>
-      <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${preset.amount||20}">
-      <label class="text-xs text-white/60">Note</label>
-      <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${preset.note||''}">
-      <button id="sendNow" class="w-full mt-4 h-11 rounded-xl bg-white text-black">Send</button>
-    `);
-    const renderRide = (plan={}) => openSheet(`
-      <h3 class="text-lg font-semibold">Ride options</h3>
-      <p class="text-sm text-white/60 mb-3">Destination: <b>${plan.where||'—'}</b> • When: <b>${plan.when||'soon'}</b></p>
-      <div class="grid gap-2">
-        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">SwiftX • 6–8 min • €12.80</button>
-        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">CityGo • 7–10 min • €11.90</button>
-        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">EcoRide • 9–12 min • €10.50</button>
-      </div>
-      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="bookRide">Book best option</button>
-    `);
-    const renderOrder = (item) => openSheet(`
-      <h3 class="text-lg font-semibold">Confirm order</h3>
-      <p class="text-sm text-white/60">Groceries in ~25 minutes.</p>
-      <ul class="list-disc ml-6 my-3 text-sm">
-        <li>Salmon, spinach, lemon</li><li>Oat milk, espresso pods</li><li>Birthday candles</li>
-        ${item ? `<li><b>+ ${item}</b> (from search)</li>` : ''}
-      </ul>
-      <p class="text-sm">Total (est.): €28.60</p>
-      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="payOrder">Pay with OmniPay</button>
-    `);
+    // --- Renderers / actions ---
+    function renderPay(p = {}) {
+      openSheet(`
+        <h3 class="text-lg font-semibold">Send money</h3>
+        <p class="text-sm text-white/60 mb-3">OmniPay secure transfer</p>
+        <label class="text-xs text-white/60">Recipient</label>
+        <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username or IBAN" value="${p.to||memory.lastRecipient||''}">
+        <label class="text-xs text-white/60">Amount</label>
+        <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${p.amount||20}">
+        <label class="text-xs text-white/60">Note</label>
+        <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${p.note||''}">
+        <div class="flex gap-2 mt-4">
+          <button id="sendNow" class="flex-1 h-11 rounded-xl bg-white text-black">Send</button>
+          <a id="sendPaypal" class="flex-1 h-11 rounded-xl bg-white/10 grid place-items-center" target="_blank">PayPal</a>
+        </div>
+      `);
+    }
+    function renderRide(plan = {}) {
+      const q = encodeURIComponent(plan.where || "Destination");
+      openSheet(`
+        <h3 class="text-lg font-semibold">Ride options</h3>
+        <p class="text-sm text-white/60 mb-3">Destination: <b>${plan.where||'—'}</b> • When: <b>${plan.when||'soon'}</b></p>
+        <div class="grid gap-2">
+          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
+             href="https://www.google.com/maps/dir/?api=1&destination=${q}">Open in Google Maps</a>
+          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
+             href="https://m.uber.com/ul/">Open Uber</a>
+        </div>
+        <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="bookRide">Book best option</button>
+      `);
+    }
+    function renderOrder(item) {
+      openSheet(`
+        <h3 class="text-lg font-semibold">Confirm order</h3>
+        <p class="text-sm text-white/60">Groceries in ~25 minutes.</p>
+        <ul class="list-disc ml-6 my-3 text-sm">
+          <li>Oat milk</li><li>Eggs</li><li>Espresso pods</li>${item ? `<li><b>+ ${item}</b></li>` : ""}
+        </ul>
+        <div class="grid gap-2">
+          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
+             href="https://www.amazon.co.uk/s?k=${encodeURIComponent(item||'oat milk eggs')}">Search Amazon</a>
+          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
+             href="https://www.google.com/search?q=${encodeURIComponent(item||'groceries near me')}">Search Google</a>
+        </div>
+        <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="payOrder">Pay with OmniPay</button>
+      `);
+    }
 
-    document.getElementById('modPay').onclick = () => renderPay();
-    document.getElementById('btnSend').onclick = () => renderPay();
-    document.getElementById('btnPay').onclick  = () => renderOrder();
-    document.getElementById('modRide').onclick = () => renderRide({ where:'Atocha Station', when:'soon' });
-    document.getElementById('btnRide').onclick = () => renderRide({ where:'Atocha Station', when:'soon' });
-    document.getElementById('modOrder').onclick = () => renderOrder();
-    document.getElementById('btnOrder').onclick = () => renderOrder();
-    document.getElementById('navPay').onclick  = () => renderPay();
-    document.getElementById('navRide').onclick = () => renderRide({ where:'Next event', when:'soon' });
-
-    sheet.addEventListener('click', (e)=>{
-      if (e.target.id === 'sendNow') {
-        const to = document.getElementById('payTo').value.trim();
-        const amt = parseFloat(document.getElementById('payAmt').value);
-        if (!to) { alert('Enter a recipient'); return; }
-        if (!Number.isFinite(amt) || amt<=0) { alert('Enter a valid amount'); return; }
+    // Delegate clicks inside sheet
+    sheet.addEventListener("click", (e) => {
+      if (e.target.id === "sendNow") {
+        const to = document.getElementById("payTo").value.trim();
+        const amt = parseFloat(document.getElementById("payAmt").value);
+        if (!to) return alert("Enter recipient");
+        if (!Number.isFinite(amt) || amt <= 0) return alert("Enter valid amount");
+        memory.lastRecipient = to; saveMem();
         alert(`Sent €${amt.toFixed(2)} to ${to}`); closeSheet();
       }
-      if (e.target.id === 'bookRide') { alert('Ride booked • driver en route 🚗'); closeSheet(); }
-      if (e.target.id === 'payOrder') { alert('Order paid • ETA ~25 min'); closeSheet(); }
+      if (e.target.id === "bookRide") { alert("Ride booked • driver en route 🚗"); closeSheet(); }
+      if (e.target.id === "payOrder") { alert("Order paid • ETA ~25 min"); closeSheet(); }
+      if (e.target.id === "sendPaypal") {
+        const to = document.getElementById("payTo").value.trim().replace(/^@/,'');
+        const amt = document.getElementById("payAmt").value;
+        e.target.href = `https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
+      }
     });
 
-    document.getElementById('intentForm').addEventListener('submit', (e)=>{
+    // --- Suggestions ---
+    const suggestions = document.getElementById("suggestions");
+    const input = document.getElementById("intentInput");
+    input.addEventListener("focus", () => suggestions.classList.remove("hidden"));
+    input.addEventListener("blur", () => setTimeout(()=>suggestions.classList.add("hidden"), 150));
+    suggestions.querySelectorAll("[data-s]").forEach(btn => {
+      btn.addEventListener("click", () => { input.value = btn.dataset.s; suggestions.classList.add("hidden"); });
+    });
+
+    // --- Quick actions ---
+    document.getElementById("qaPay").onclick = () => { msgMine("pay @ari 20 for lunch"); handleQuery("pay @ari 20 for lunch"); };
+    document.getElementById("qaRide").onclick = () => { msgMine("ride to Atocha at 7pm"); handleQuery("ride to Atocha at 7pm"); };
+    document.getElementById("qaOrder").onclick = () => { msgMine("order oat milk and eggs"); handleQuery("order oat milk and eggs"); };
+
+    // --- Core: handle query ---
+    function handleQuery(q) {
+      const intent = parseIntent(q);
+      const thinking = msgBot("Omnia is thinking…", true);
+
+      setTimeout(() => {
+        if (intent.type === "pay") {
+          thinking.innerHTML = `Got it. Preparing to send <b>€${intent.amount.toFixed(2)}</b> to <b>${intent.to}</b>${intent.note ? ` for <b>${intent.note}</b>` : ""}.`;
+          renderPay(intent);
+          return;
+        }
+        if (intent.type === "ride") {
+          thinking.innerHTML = `Sure. Finding rides to <b>${intent.where}</b> (${intent.when}).`;
+          renderRide(intent);
+          return;
+        }
+        if (intent.type === "order") {
+          thinking.innerHTML = `Okay. Adding <b>${intent.item}</b> to your basket.`;
+          renderOrder(intent.item);
+          return;
+        }
+        if (intent.type === "weather") {
+          thinking.innerHTML = `Weather in <b>${intent.where}</b> — looks mild with a chance of clouds. (Demo)`;
+          return;
+        }
+        if (intent.type === "question") {
+          thinking.innerHTML = `Here’s what I found for: <b>${intent.text}</b>.`;
+          const url = `https://www.google.com/search?q=${encodeURIComponent(intent.text)}`;
+          thinking.insertAdjacentHTML("beforeend", `<div class="mt-2"><a class="underline" target="_blank" href="${url}">Open results ↗</a></div>`);
+          return;
+        }
+        thinking.innerHTML = "Please type a request.";
+      }, 350);
+    }
+
+    // Form submit
+    document.getElementById("intentForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      const q = document.getElementById('intentInput').value;
-      const i = parseIntent(q);
-      if (i.type==='pay') return renderPay(i);
-      if (i.type==='pay-lite') return renderPay();
-      if (i.type==='ride') return renderRide({ where:i.where, when:i.when });
-      if (i.type==='order') return renderOrder(i.item);
-      alert(`Search: ${i.text}`);
+      const q = input.value.trim();
+      if (!q) return;
+      msgMine(q);
+      input.value = "";
+      handleQuery(q);
     });
   </script>
 </body>
