@@ -12,9 +12,7 @@
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { theme:{ extend:{ colors:{ brand:{500:'#6366f1'} } } } }
-  </script>
+  <script>tailwind.config = { theme:{ extend:{ colors:{ brand:{500:'#6366f1'} } } } }</script>
 
   <style>
     * { -webkit-tap-highlight-color: transparent; }
@@ -51,9 +49,11 @@
     </form>
   </section>
 
-  <!-- Main content (same as before) -->
+  <!-- Main content -->
   <main class="max-w-6xl mx-auto px-4 py-6 grid gap-6 lg:grid-cols-3">
+    <!-- Left -->
     <div class="lg:col-span-2 grid gap-6">
+      <!-- Life Hub -->
       <div class="rounded-2xl border border-white/10 glass">
         <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
           <h2 class="text-lg font-semibold">Life Hub</h2><span class="text-sm text-white/60">Today</span>
@@ -74,6 +74,7 @@
         </div>
       </div>
 
+      <!-- Modules -->
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <button id="modPay"  class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
           <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div><div><p class="font-semibold">Payments</p><p class="text-xs text-white/60">Send & request</p></div></div><span>›</span>
@@ -90,7 +91,9 @@
       </div>
     </div>
 
+    <!-- Right -->
     <div class="grid gap-6">
+      <!-- Wallet -->
       <div class="rounded-2xl border border-white/10 glass">
         <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
           <h3 class="font-semibold">OmniPay Wallet</h3><span class="text-xs px-2 py-1 rounded-full bg-white/10">Secure</span>
@@ -110,6 +113,7 @@
         </div>
       </div>
 
+      <!-- Ride -->
       <div class="rounded-2xl border border-white/10 glass p-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2"><span class="text-lg">🚗</span><h4 class="font-semibold">Ride to next event</h4></div>
@@ -117,4 +121,197 @@
         </div>
         <div class="flex items-center gap-3 mt-3">
           <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">📍</div>
-          <div class="flex-1"><p class="text-sm">14 Calle de Velázquez
+          <div class="flex-1"><p class="text-sm">14 Calle de Velázquez → Atocha Station</p><p class="text-xs text-white/60">Auto‑booked from calendar</p></div>
+          <button id="btnRide" class="px-3 py-2 rounded-xl bg-white text-black active:scale-95">Open</button>
+        </div>
+      </div>
+
+      <!-- Groceries -->
+      <div class="rounded-2xl border border-white/10 glass p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="text-lg">🛒</span><h4 class="font-semibold">Meal & Groceries</h4></div>
+          <span class="px-2 py-1 rounded-full bg-white/10 text-xs">Smart List</span>
+        </div>
+        <ul class="list-disc ml-6 mt-3 text-sm space-y-1">
+          <li>Salmon, spinach, lemon</li><li>Oat milk, espresso pods</li><li>Birthday candles 🎂</li>
+        </ul>
+        <div class="mt-3 flex gap-2">
+          <button id="btnOrder" class="px-3 py-2 rounded-xl bg-white/10 active:scale-95">Order</button>
+          <button class="px-3 py-2 rounded-xl bg-white/0 border border-white/10 active:scale-95">Add item</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom nav -->
+  <nav class="lg:hidden sticky bottom-0 glass border-t border-white/10">
+    <div class="grid grid-cols-4 gap-1 p-2 max-w-3xl mx-auto">
+      <button class="px-3 py-2 rounded-2xl bg-white/10">Hub</button>
+      <button class="px-3 py-2 rounded-2xl" id="navPay">Pay</button>
+      <button class="px-3 py-2 rounded-2xl" id="navRide">Services</button>
+      <button class="px-3 py-2 rounded-2xl">You</button>
+    </div>
+  </nav>
+
+  <!-- Bottom Sheet -->
+  <div id="sheet" class="hidden sheet" aria-hidden="true">
+    <div class="dialog bg-slate-900 border-t border-white/10 p-4">
+      <div id="sheetBody"></div>
+      <button id="closeSheet" class="w-full mt-4 h-11 rounded-xl bg-white/10">Close</button>
+    </div>
+  </div>
+
+  <!-- Install banner -->
+  <div id="installBanner" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
+    <div class="glass border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">📲</div>
+      <div class="text-sm">
+        <div class="font-semibold">Install Omnia</div>
+        <div class="text-white/60">Add to your home screen</div>
+      </div>
+      <div class="flex gap-2">
+        <button id="installNow" class="px-3 py-2 rounded-xl bg-white text-black">Install</button>
+        <button id="installLater" class="px-3 py-2 rounded-xl bg-white/10">Later</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update toast -->
+  <div id="updateToast" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
+    <div class="glass border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">⬆️</div>
+      <div class="text-sm"><div class="font-semibold">Update available</div><div class="text-white/60">Tap to refresh</div></div>
+      <button id="refreshApp" class="px-3 py-2 rounded-xl bg-white text-black">Refresh</button>
+    </div>
+  </div>
+
+  <script>
+    // Register service worker (absolute path for GH Pages)
+    let newWorker;
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/Omnia-live/service-worker.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              document.getElementById('updateToast').classList.remove('hidden');
+            }
+          });
+        });
+      });
+      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+    }
+
+    // Install banner (A2HS)
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBanner').classList.remove('hidden');
+    });
+    document.getElementById('installNow').onclick = async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installBanner').classList.add('hidden');
+    };
+    document.getElementById('installLater').onclick = () =>
+      document.getElementById('installBanner').classList.add('hidden');
+
+    // Update toast: tell SW to skipWaiting, then auto-reload via controllerchange
+    document.getElementById('refreshApp').onclick = () => {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+      }
+    };
+
+    // Helpers: sheet + intents
+    const sheet = document.getElementById('sheet');
+    const sheetBody = document.getElementById('sheetBody');
+    const openSheet = (html) => { sheetBody.innerHTML = html; sheet.classList.remove('hidden'); }
+    const closeSheet = () => sheet.classList.add('hidden');
+    document.getElementById('closeSheet').addEventListener('click', closeSheet);
+    sheet.addEventListener('click', (e)=>{ if(e.target===sheet) closeSheet(); });
+
+    const parseIntent = (q) => {
+      const s = q.trim().toLowerCase(); if (!s) return {type:'none'};
+      if (s.startsWith('pay ')) {
+        const m = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
+        if (m) return {type:'pay', to:m[1], amount:parseFloat(m[2].replace(',','.')), note:m[3]||''};
+        return {type:'pay-lite'};
+      }
+      const ride = s.match(/^ride\s+(?:to\s+)?(.+?)(?:\s+at\s+(.+))?$/i);
+      if (ride) return {type:'ride', where:ride[1], when:ride[2]||'soon'};
+      const ord = s.match(/^order\s+(.+)$/i);
+      if (ord) return {type:'order', item:ord[1]};
+      return {type:'search', text:s};
+    };
+
+    const renderPay = (preset={}) => openSheet(`
+      <h3 class="text-lg font-semibold">Send money</h3>
+      <p class="text-sm text-white/60 mb-3">Transfer instantly with OmniPay.</p>
+      <label class="text-xs text-white/60">Recipient</label>
+      <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username or IBAN" value="${preset.to||''}">
+      <label class="text-xs text-white/60">Amount</label>
+      <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${preset.amount||20}">
+      <label class="text-xs text-white/60">Note</label>
+      <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${preset.note||''}">
+      <button id="sendNow" class="w-full mt-4 h-11 rounded-xl bg-white text-black">Send</button>
+    `);
+    const renderRide = (plan={}) => openSheet(`
+      <h3 class="text-lg font-semibold">Ride options</h3>
+      <p class="text-sm text-white/60 mb-3">Destination: <b>${plan.where||'—'}</b> • When: <b>${plan.when||'soon'}</b></p>
+      <div class="grid gap-2">
+        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">SwiftX • 6–8 min • €12.80</button>
+        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">CityGo • 7–10 min • €11.90</button>
+        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">EcoRide • 9–12 min • €10.50</button>
+      </div>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="bookRide">Book best option</button>
+    `);
+    const renderOrder = (item) => openSheet(`
+      <h3 class="text-lg font-semibold">Confirm order</h3>
+      <p class="text-sm text-white/60">Groceries in ~25 minutes.</p>
+      <ul class="list-disc ml-6 my-3 text-sm">
+        <li>Salmon, spinach, lemon</li><li>Oat milk, espresso pods</li><li>Birthday candles</li>
+        ${item ? `<li><b>+ ${item}</b> (from search)</li>` : ''}
+      </ul>
+      <p class="text-sm">Total (est.): €28.60</p>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="payOrder">Pay with OmniPay</button>
+    `);
+
+    document.getElementById('modPay').onclick = () => renderPay();
+    document.getElementById('btnSend').onclick = () => renderPay();
+    document.getElementById('btnPay').onclick  = () => renderOrder();
+    document.getElementById('modRide').onclick = () => renderRide({ where:'Atocha Station', when:'soon' });
+    document.getElementById('btnRide').onclick = () => renderRide({ where:'Atocha Station', when:'soon' });
+    document.getElementById('modOrder').onclick = () => renderOrder();
+    document.getElementById('btnOrder').onclick = () => renderOrder();
+    document.getElementById('navPay').onclick  = () => renderPay();
+    document.getElementById('navRide').onclick = () => renderRide({ where:'Next event', when:'soon' });
+
+    sheet.addEventListener('click', (e)=>{
+      if (e.target.id === 'sendNow') {
+        const to = document.getElementById('payTo').value.trim();
+        const amt = parseFloat(document.getElementById('payAmt').value);
+        if (!to) { alert('Enter a recipient'); return; }
+        if (!Number.isFinite(amt) || amt<=0) { alert('Enter a valid amount'); return; }
+        alert(`Sent €${amt.toFixed(2)} to ${to}`); closeSheet();
+      }
+      if (e.target.id === 'bookRide') { alert('Ride booked • driver en route 🚗'); closeSheet(); }
+      if (e.target.id === 'payOrder') { alert('Order paid • ETA ~25 min'); closeSheet(); }
+    });
+
+    document.getElementById('intentForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const q = document.getElementById('intentInput').value;
+      const i = parseIntent(q);
+      if (i.type==='pay') return renderPay(i);
+      if (i.type==='pay-lite') return renderPay();
+      if (i.type==='ride') return renderRide({ where:i.where, when:i.when });
+      if (i.type==='order') return renderOrder(i.item);
+      alert(`Search: ${i.text}`);
+    });
+  </script>
+</body>
+</html>
