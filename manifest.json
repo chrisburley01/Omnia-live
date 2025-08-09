@@ -1,13 +1,29 @@
 {
   "name": "Omnia",
   "short_name": "Omnia",
-  "start_url": ".",
+  "description": "The AI super app — search, pay, ride, order, and more in one place.",
+  "start_url": "/Omnia-live/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#0b0b0b",
+  "theme_color": "#0b0b0b",
+  "orientation": "portrait-primary",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "omnia-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/Omnia-live/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Omnia-live/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Omnia-live/icons/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
