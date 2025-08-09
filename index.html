@@ -2,69 +2,345 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Omnia — Super App</title>
+
+  <!-- PWA bits (absolute paths for GitHub Pages) -->
   <link rel="manifest" href="/Omnia-live/manifest.json" />
   <link rel="apple-touch-icon" href="/Omnia-live/icons/icon-180.png" />
   <meta name="theme-color" content="#0b0b0b" />
+
+  <!-- Tailwind (CDN) for nice UI -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#6366f1' }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0b0b;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+    * { -webkit-tap-highlight-color: transparent; }
+    .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(8px); }
+    .sheet {
+      position: fixed; inset: 0; display: grid; place-items: end; z-index: 50;
+      background: rgba(0,0,0,.55);
     }
-    header {
-      font-size: 1.5em;
-      margin-bottom: 20px;
-    }
-    input {
-      padding: 10px;
-      font-size: 1em;
-      width: 90%;
-      max-width: 400px;
-      border: none;
-      border-radius: 6px;
-    }
-    main {
-      margin-top: 20px;
-      text-align: center;
+    .dialog {
+      width: 100%; max-width: 680px; border-top-left-radius: 1rem; border-top-right-radius: 1rem;
     }
   </style>
 </head>
-<body>
-  <header>Omnia — All in One</header>
-  <input id="universalSearch" placeholder="Type: pay Ari 20, ride to Atocha..." />
-  <main id="content">
-    <p>Welcome to Omnia — your everything app in one place.</p>
+<body class="min-h-screen bg-gradient-to-b from-slate-900 to-black text-white">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 glass border-b border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500/30 to-indigo-500/30 grid place-items-center">✨</div>
+      <div class="leading-tight">
+        <h1 class="text-xl font-semibold">Omnia</h1>
+        <p class="text-xs text-white/60">One app. Every part of your life.</p>
+      </div>
+      <div class="flex-1"></div>
+      <span class="hidden md:flex gap-2">
+        <span class="px-2 py-1 text-xs rounded-full bg-white/10">Private by default</span>
+        <span class="px-2 py-1 text-xs rounded-full bg-white/10">Unified ID</span>
+        <span class="px-2 py-1 text-xs rounded-full bg-white/10">OmniPay</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- Universal Search -->
+  <section class="max-w-6xl mx-auto px-4 mt-5">
+    <form id="intentForm" class="relative">
+      <input id="intentInput" autocomplete="off"
+             placeholder="Try: pay Ari 20 for lunch • ride to Atocha at 7pm • order oat milk"
+             class="w-full h-12 rounded-xl pl-4 pr-12 bg-white/10 border border-white/10 placeholder:white/50 outline-none" />
+      <button class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 rounded-lg bg-white/10">Go</button>
+    </form>
+  </section>
+
+  <!-- Main content -->
+  <main class="max-w-6xl mx-auto px-4 py-6 grid gap-6 lg:grid-cols-3">
+    <!-- Left: Agenda + Modules -->
+    <div class="lg:col-span-2 grid gap-6">
+      <!-- Life Hub -->
+      <div class="rounded-2xl border border-white/10 glass">
+        <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+          <h2 class="text-lg font-semibold">Life Hub</h2>
+          <span class="text-sm text-white/60">Today</span>
+        </div>
+        <div class="p-4 divide-y divide-white/5 text-sm">
+          <div class="flex items-center justify-between py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">📅</div>
+              <span>Client meeting</span>
+            </div>
+            <span class="text-white/60">10:00</span>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">🔔</div>
+              <span>Anniversary dinner</span>
+            </div>
+            <span class="text-white/60">19:00</span>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">✨</div>
+              <span>Daily Planner AI</span>
+            </div>
+            <span class="text-white/60">in 12 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modules grid -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <button id="modPay" class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div>
+            <div><p class="font-semibold">Payments</p><p class="text-xs text-white/60">Send & request</p></div>
+          </div>
+          <span>›</span>
+        </button>
+
+        <button id="modRide" class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🚗</div>
+            <div><p class="font-semibold">Rides</p><p class="text-xs text-white/60">Book & track</p></div>
+          </div>
+          <span>›</span>
+        </button>
+
+        <button id="modOrder" class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🛒</div>
+            <div><p class="font-semibold">Groceries</p><p class="text-xs text-white/60">Smart list</p></div>
+          </div>
+          <span>›</span>
+        </button>
+
+        <button class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💬</div>
+            <div><p class="font-semibold">Messages</p><p class="text-xs text-white/60">Unified inbox</p></div>
+          </div>
+          <span>›</span>
+        </button>
+
+        <button class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🎵</div>
+            <div><p class="font-semibold">Media</p><p class="text-xs text-white/60">Music & video</p></div>
+          </div>
+          <span>›</span>
+        </button>
+
+        <button class="rounded-2xl border border-white/10 glass p-4 flex items-center justify-between active:scale-95">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💓</div>
+            <div><p class="font-semibold">Health</p><p class="text-xs text-white/60">Snapshot</p></div>
+          </div>
+          <span>›</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Wallet + suggestions -->
+    <div class="grid gap-6">
+      <!-- Wallet -->
+      <div class="rounded-2xl border border-white/10 glass">
+        <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+          <h3 class="font-semibold">OmniPay Wallet</h3>
+          <span class="text-xs px-2 py-1 rounded-full bg-white/10">Secure</span>
+        </div>
+        <div class="p-4">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="text-white/60 text-sm">Available Balance</p>
+              <p class="text-3xl font-bold">€1,284.40</p>
+            </div>
+            <div class="flex gap-2">
+              <button id="btnSend" class="px-3 py-2 rounded-xl bg-white/10 active:scale-95">Send</button>
+              <button id="btnPay" class="px-3 py-2 rounded-xl bg-white text-black active:scale-95">Pay</button>
+            </div>
+          </div>
+          <div class="mt-4 text-sm">
+            <div class="flex items-center justify-between"><span>Budget — August</span><span>62%</span></div>
+            <div class="h-2 rounded bg-white/10 mt-2 overflow-hidden">
+              <div class="h-full bg-white" style="width:62%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ride suggestion -->
+      <div class="rounded-2xl border border-white/10 glass p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="text-lg">🚗</span><h4 class="font-semibold">Ride to next event</h4></div>
+          <span class="px-2 py-1 rounded-full bg-white/10 text-xs">ETA 7 min</span>
+        </div>
+        <div class="flex items-center gap-3 mt-3">
+          <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">📍</div>
+          <div class="flex-1">
+            <p class="text-sm">14 Calle de Velázquez → Atocha Station</p>
+            <p class="text-xs text-white/60">Auto-booked from calendar</p>
+          </div>
+          <button id="btnRide" class="px-3 py-2 rounded-xl bg-white text-black active:scale-95">Open</button>
+        </div>
+      </div>
+
+      <!-- Groceries -->
+      <div class="rounded-2xl border border-white/10 glass p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2"><span class="text-lg">🛒</span><h4 class="font-semibold">Meal & Groceries</h4></div>
+          <span class="px-2 py-1 rounded-full bg-white/10 text-xs">Smart List</span>
+        </div>
+        <ul class="list-disc ml-6 mt-3 text-sm space-y-1">
+          <li>Salmon, spinach, lemon</li>
+          <li>Oat milk, espresso pods</li>
+          <li>Birthday candles 🎂</li>
+        </ul>
+        <div class="mt-3 flex gap-2">
+          <button id="btnOrder" class="px-3 py-2 rounded-xl bg-white/10 active:scale-95">Order</button>
+          <button class="px-3 py-2 rounded-xl bg-white/0 border border-white/10 active:scale-95">Add item</button>
+        </div>
+      </div>
+    </div>
   </main>
 
+  <!-- Bottom nav (mobile) -->
+  <nav class="lg:hidden sticky bottom-0 glass border-t border-white/10">
+    <div class="grid grid-cols-4 gap-1 p-2 max-w-3xl mx-auto">
+      <button class="px-3 py-2 rounded-2xl bg-white/10">Hub</button>
+      <button class="px-3 py-2 rounded-2xl" id="navPay">Pay</button>
+      <button class="px-3 py-2 rounded-2xl" id="navRide">Services</button>
+      <button class="px-3 py-2 rounded-2xl">You</button>
+    </div>
+  </nav>
+
+  <!-- ====== Dialog / Sheets ====== -->
+  <div id="sheet" class="hidden sheet" aria-hidden="true">
+    <div class="dialog bg-slate-900 border-t border-white/10 p-4">
+      <div id="sheetBody"></div>
+      <button id="closeSheet" class="w-full mt-4 h-11 rounded-xl bg-white/10">Close</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
   <script>
-    // Register service worker
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/Omnia-live/service-worker.js")
-        .then(() => console.log("Service Worker registered"))
-        .catch(console.error);
+    // Register service worker (absolute path for GH Pages)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/Omnia-live/service-worker.js').catch(()=>{});
     }
 
-    // Simple universal search parser
-    document.getElementById("universalSearch").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        const query = this.value.toLowerCase();
-        let output = "I don't understand that yet.";
-        if (query.startsWith("pay ")) {
-          output = `Initiating payment: ${query}`;
-        } else if (query.startsWith("ride to")) {
-          output = `Booking ride: ${query}`;
-        } else if (query.startsWith("order")) {
-          output = `Ordering: ${query}`;
-        }
-        document.getElementById("content").innerHTML = `<p>${output}</p>`;
+    // Helpers
+    const sheet = document.getElementById('sheet');
+    const sheetBody = document.getElementById('sheetBody');
+    const openSheet = (html) => { sheetBody.innerHTML = html; sheet.classList.remove('hidden'); }
+    const closeSheet = () => sheet.classList.add('hidden');
+    document.getElementById('closeSheet').addEventListener('click', closeSheet);
+    sheet.addEventListener('click', (e)=>{ if(e.target===sheet) closeSheet(); });
+
+    // Universal intent parser
+    const parseIntent = (q) => {
+      const s = q.trim().toLowerCase();
+      if (!s) return {type:'none'};
+      if (s.startsWith('pay ')) {
+        const m = s.match(/^pay\\s+(@?\\w+)\\s+([\\d.,]+)(?:\\s+for\\s+(.+))?$/i);
+        if (m) return { type:'pay', to:m[1], amount:parseFloat(m[2].replace(',', '.')), note:m[3]||'' };
+        return { type:'pay-lite', text:s.slice(4) };
       }
+      const ride = s.match(/^ride\\s+(?:to\\s+)?(.+?)(?:\\s+at\\s+(.+))?$/i);
+      if (ride) return { type:'ride', where:ride[1], when:ride[2]||'soon' };
+      const ord = s.match(/^order\\s+(.+)$/i);
+      if (ord) return { type:'order', item:ord[1] };
+      return { type:'search', text:s };
+    };
+
+    // Intent -> UI
+    const renderPay = (preset={}) => openSheet(`
+      <h3 class="text-lg font-semibold">Send money</h3>
+      <p class="text-sm text-white/60 mb-3">Transfer instantly with OmniPay.</p>
+      <label class="text-xs text-white/60">Recipient</label>
+      <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username or IBAN" value="${preset.to||''}">
+      <label class="text-xs text-white/60">Amount</label>
+      <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${preset.amount||20}">
+      <label class="text-xs text-white/60">Note</label>
+      <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${preset.note||''}">
+      <button id="sendNow" class="w-full mt-4 h-11 rounded-xl bg-white text-black">Send</button>
+    `);
+
+    const renderRide = (plan={}) => openSheet(`
+      <h3 class="text-lg font-semibold">Ride options</h3>
+      <p class="text-sm text-white/60 mb-3">Destination: <b>${plan.where||'—'}</b> • When: <b>${plan.when||'soon'}</b></p>
+      <div class="grid gap-2">
+        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">SwiftX • 6–8 min • €12.80</button>
+        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">CityGo • 7–10 min • €11.90</button>
+        <button class="px-3 py-3 rounded-xl bg-white/10 text-left">EcoRide • 9–12 min • €10.50</button>
+      </div>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="bookRide">Book best option</button>
+    `);
+
+    const renderOrder = (item) => openSheet(`
+      <h3 class="text-lg font-semibold">Confirm order</h3>
+      <p class="text-sm text-white/60">Groceries in ~25 minutes.</p>
+      <ul class="list-disc ml-6 my-3 text-sm">
+        <li>Salmon, spinach, lemon</li>
+        <li>Oat milk, espresso pods</li>
+        <li>Birthday candles</li>
+        ${item ? `<li><b>+ ${item}</b> (from search)</li>` : ''}
+      </ul>
+      <p class="text-sm">Total (est.): €28.60</p>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="payOrder">Pay with OmniPay</button>
+    `);
+
+    // Wire module buttons
+    document.getElementById('modPay').onclick = () => renderPay();
+    document.getElementById('btnSend').onclick = () => renderPay();
+    document.getElementById('btnPay').onclick  = () => renderOrder();
+    document.getElementById('modRide').onclick = () => renderRide({ where:'Atocha Station', when:'soon' });
+    document.getElementById('btnRide').onclick = () => renderRide({ where:'Atocha Station', when:'soon' });
+    document.getElementById('modOrder').onclick = () => renderOrder();
+    document.getElementById('btnOrder').onclick = () => renderOrder();
+    document.getElementById('navPay').onclick  = () => renderPay();
+    document.getElementById('navRide').onclick = () => renderRide({ where:'Next event', when:'soon' });
+
+    // Sheet actions (delegate after open)
+    sheet.addEventListener('click', (e)=>{
+      if (e.target.id === 'sendNow') {
+        const to = document.getElementById('payTo').value.trim();
+        const amt = parseFloat(document.getElementById('payAmt').value);
+        if (!to) { alert('Enter a recipient'); return; }
+        if (!Number.isFinite(amt) || amt<=0) { alert('Enter a valid amount'); return; }
+        alert(`Sent €${amt.toFixed(2)} to ${to}`);
+        closeSheet();
+      }
+      if (e.target.id === 'bookRide') {
+        alert('Ride booked • driver en route 🚗');
+        closeSheet();
+      }
+      if (e.target.id === 'payOrder') {
+        alert('Order paid • ETA ~25 min');
+        closeSheet();
+      }
+    });
+
+    // Handle universal search
+    document.getElementById('intentForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const q = document.getElementById('intentInput').value;
+      const i = parseIntent(q);
+      if (i.type==='pay') return renderPay(i);
+      if (i.type==='pay-lite') return renderPay();
+      if (i.type==='ride') return renderRide({ where:i.where, when:i.when });
+      if (i.type==='order') return renderOrder(i.item);
+      alert(`Search: ${i.text}`);
     });
   </script>
 </body>
