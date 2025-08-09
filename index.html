@@ -1,104 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Omnia — Ask anything. Omnia gets it done.</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icons/icon-192.png" type="image/png" />
-  <meta name="theme-color" content="#0d1117" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="/Omnia-live/manifest.json"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="/Omnia-live/icons/favicon-512.png">
+  <link rel="apple-touch-icon" href="/Omnia-live/icons/icon-180.png">
+  <meta name="theme-color" content="#0b0b0b"/>
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
+          colors: { brand: { 500:'#7c9eff', 600:'#5b87ff' } },
+          boxShadow: {
+            glow: '0 0 0 2px rgba(124,158,255,.35), 0 0 42px rgba(124,158,255,.35)',
+            soft:'0 10px 30px rgba(0,0,0,.25)'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background-color: #0d1117;
-      color: white;
-    }
-    .glass {
-      backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.04);
-    }
-    .card {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 1rem;
-    }
-    .shadow-soft {
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    .max-w-6xl { max-width: 72rem; }
-    .mx-auto { margin-left: auto; margin-right: auto; }
-    .px-4 { padding-left: 1rem; padding-right: 1rem; }
-    .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-    .flex { display: flex; }
-    .items-center { align-items: center; }
-    .gap-4 { gap: 1rem; }
-    .gap-2 { gap: 0.5rem; }
-    .rounded-2xl { border-radius: 1rem; }
-    .overflow-hidden { overflow: hidden; }
-    .w-11 { width: 2.75rem; }
-    .h-11 { height: 2.75rem; }
-    .relative { position: relative; }
-    .absolute { position: absolute; }
-    .inset-0 { top:0; right:0; bottom:0; left:0; }
-    .opacity-60 { opacity: 0.6; }
-    .grid { display: grid; }
-    .place-items-center { place-items: center; }
-    .text-xl { font-size: 1.25rem; }
-    .font-semibold { font-weight: 600; }
-    .tracking-tight { letter-spacing: -0.015em; }
-    .hidden { display: none; }
-    .sm\:inline { display: inline; }
-    .text-\[12px\] { font-size: 12px; }
-    .text-\[10px\] { font-size: 10px; }
-    .text-white\/70 { color: rgba(255,255,255,0.7); }
-    .bg-white\/10 { background-color: rgba(255,255,255,0.1); }
-    .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
-    .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
-    .flex-1 { flex: 1 1 0%; }
-    .ring-1 { box-shadow: 0 0 0 1px rgba(255,255,255,0.15); }
-    .bg-white\/5 { background-color: rgba(255,255,255,0.05); }
-    .text-center { text-align: center; }
-    .mt-4 { margin-top: 1rem; }
-    input {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 0.75rem;
-      border: none;
-      outline: none;
-      background: rgba(255,255,255,0.08);
-      color: white;
-    }
-    button {
-      padding: 0.75rem 1rem;
-      border: none;
-      border-radius: 0.75rem;
-      background: linear-gradient(90deg, #7c9eff, #0ea5e9);
-      color: white;
-      cursor: pointer;
-    }
+    *{ -webkit-tap-highlight-color:transparent }
+    body{ font-family:Inter,ui-sans-serif,system-ui; color:#fff; background:#0a0b10 }
+    .bg-omnia{ position:fixed; inset:0; z-index:-1;
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(124,158,255,.22), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(99,102,241,.18), transparent 60%),
+        linear-gradient(180deg, #0a0b10 0%, #06070a 100%) }
+    .glass{ background:rgba(255,255,255,.06); backdrop-filter:blur(12px) }
+    .card{ border:1px solid rgba(255,255,255,.10); border-radius:1rem }
+    .ringgrad{ box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), inset 0 0 0 6px rgba(124,158,255,.08) }
+    .type-cursor::after{ content:'▍'; opacity:.7; animation:blink 1s steps(1) infinite }
+    @keyframes blink{ 50%{ opacity:0 } }
+    .tap{ transition: transform .12s } .tap:active{ transform:scale(.98) }
   </style>
 </head>
-<body>
+<body class="min-h-screen">
+  <div class="bg-omnia"></div>
 
-  <!-- HEADER -->
+  <!-- Header with logo + tagline -->
   <header class="sticky top-0 z-40 shadow-soft">
-    <div
-      class="glass card border-white/10 backdrop-blur-md"
-      style="background:
-        linear-gradient(90deg, rgba(124,158,255,.12), rgba(14,165,233,.10) 45%, rgba(124,158,255,.06));
-        box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.35);
-      "
-    >
+    <div class="glass card" style="background:
+      linear-gradient(90deg, rgba(124,158,255,.12), rgba(14,165,233,.10) 45%, rgba(124,158,255,.06));
+      box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.35)">
       <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
         <div class="relative">
           <div class="absolute inset-0 rounded-2xl blur-xl opacity-60"
-               style="background: radial-gradient(60% 60% at 50% 50%, rgba(124,158,255,.45), transparent 70%);"></div>
+               style="background:radial-gradient(60% 60% at 50% 50%, rgba(124,158,255,.45), transparent 70%)"></div>
           <div class="relative w-11 h-11 rounded-2xl ring-1 ring-white/15 bg-white/5 grid place-items-center overflow-hidden">
-            <img src="omnia-logo.png" alt="Omnia" class="w-full h-full object-cover"/>
+            <img src="/Omnia-live/omnia-logo.png" alt="Omnia" class="w-full h-full object-cover"/>
           </div>
         </div>
-
         <div class="leading-tight">
           <div class="flex items-center gap-2">
             <h1 class="text-xl font-semibold tracking-tight">Omnia</h1>
@@ -106,9 +69,7 @@
           </div>
           <p class="text-[12px] text-white/70">Ask anything. Omnia gets it done.</p>
         </div>
-
         <div class="flex-1"></div>
-
         <div class="hidden sm:flex gap-2 text-[11px]">
           <span class="px-2 py-1 rounded-full glass card">Private</span>
           <span class="px-2 py-1 rounded-full glass card">Unified ID</span>
@@ -118,33 +79,192 @@
     </div>
   </header>
 
-  <!-- SEARCH BAR -->
-  <main class="max-w-6xl mx-auto px-4 mt-4">
-    <div class="flex gap-2">
-      <input type="text" id="searchBox" placeholder="Ask Omnia anything..." />
-      <button onclick="runSearch()">Go</button>
-    </div>
+  <!-- Chat area -->
+  <main class="max-w-3xl mx-auto px-4 pt-6">
+    <!-- Input -->
+    <form id="oracle" class="relative">
+      <div class="relative rounded-2xl glass card ringgrad shadow-glow">
+        <div class="flex items-center gap-3 px-4 pt-3">
+          <div class="w-8 h-8 rounded-xl bg-white/10 grid place-items-center">✨</div>
+          <div class="text-xs text-white/60">Ask Omnia…</div>
+          <div class="flex-1"></div>
+          <div class="hidden sm:block text-[10px] text-white/60">pay @ari 20 • ride to Atocha • order oat milk</div>
+        </div>
+        <div class="px-4 pb-3">
+          <input id="q" autocomplete="off" class="w-full h-14 bg-transparent outline-none text-base placeholder-white/50"
+                 placeholder="Type a request or question"/>
+        </div>
+      </div>
+      <div id="hints" class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div>
+      <button class="mt-4 w-full h-12 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 shadow-glow tap font-medium">Ask Omnia</button>
+    </form>
 
-    <div id="results" class="mt-4"></div>
+    <!-- Chat feed -->
+    <section id="feed" class="mt-6 space-y-4"></section>
   </main>
 
-  <script>
-    function runSearch() {
-      const query = document.getElementById('searchBox').value.trim();
-      const resultsDiv = document.getElementById('results');
-      if (!query) {
-        resultsDiv.innerHTML = '<p>Please type something...</p>';
-        return;
-      }
-      // Local Omnia-style search result (not going to Google)
-      resultsDiv.innerHTML = `
-        <div class="card glass p-4">
-          <h3>Results for: "${query}"</h3>
-          <p>[Omnia AI simulated answer would appear here]</p>
-        </div>
-      `;
-    }
-  </script>
+  <!-- Install banner -->
+  <div id="installBanner" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
+    <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">📲</div>
+      <div class="text-sm"><div class="font-semibold">Install Omnia</div><div class="text-white/70">Add to your home screen</div></div>
+      <div class="flex gap-2"><button id="installNow" class="px-3 py-2 rounded-xl bg-white text-black">Install</button><button id="installLater" class="px-3 py-2 rounded-xl glass card">Later</button></div>
+    </div>
+  </div>
 
-</body>
-</html>
+  <!-- Update toast -->
+  <div id="updateToast" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
+    <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">⬆️</div>
+      <div class="text-sm"><div class="font-semibold">Update available</div><div class="text-white/70">Tap to refresh</div></div>
+      <button id="refreshApp" class="px-3 py-2 rounded-xl bg-white text-black">Refresh</button>
+    </div>
+  </div>
+
+  <script>
+    /* ====== Switch: Use public web APIs or offline demo ====== */
+    const USE_APIS = true; // set to false to keep everything offline
+
+    /* ====== PWA registration ====== */
+    let newWorker;
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/Omnia-live/service-worker.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              document.getElementById('updateToast').classList.remove('hidden');
+            }
+          });
+        });
+      });
+      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+    }
+    document.getElementById('refreshApp').onclick = () =>
+      navigator.serviceWorker?.controller?.postMessage({ type:'SKIP_WAITING' });
+
+    // A2HS
+    let deferredPrompt=null;
+    window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('installBanner').classList.remove('hidden'); });
+    document.getElementById('installNow').onclick = async () => { if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; document.getElementById('installBanner').classList.add('hidden'); };
+    document.getElementById('installLater').onclick = ()=> document.getElementById('installBanner').classList.add('hidden');
+
+    /* ====== Local memory ====== */
+    const mem = { get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
+    const contacts = mem.get('omnia:contacts', ['ari','bea','chen']);
+    const places = mem.get('omnia:places', ['Atocha Station','Heathrow']);
+    const list = mem.get('omnia:list', ['Oat milk','Eggs','Espresso pods']);
+
+    /* ====== UI helpers ====== */
+    const feed = document.getElementById('feed');
+    const bubble = (html, mine=false) => {
+      const wrap=document.createElement('div');
+      wrap.className= mine ? 'flex justify-end' : 'flex';
+      wrap.innerHTML = `<div class="max-w-[85%] ${mine?'bg-white text-black':'glass card'} px-4 py-3 rounded-2xl shadow-soft">${html}</div>`;
+      feed.append(wrap);
+      window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' });
+      return wrap.querySelector('div');
+    };
+    const typing = (text='Omnia is thinking…') => {
+      return bubble(`<span class="type-cursor text-white/80">${text}</span>`);
+    };
+
+    /* ====== Hints ====== */
+    const qEl = document.getElementById('q'), hints = document.getElementById('hints');
+    const renderHints = (t='')=>{
+      const s=t.trim().toLowerCase(); const items=[];
+      if(!s){ items.push('pay @ari 20 for lunch','ride to Atocha at 7pm','order oat milk','weather in London','open maps','search dinner ideas'); }
+      else{
+        if ('pay'.startsWith(s)||s.startsWith('pay')) items.push(`pay @${contacts[0]} 20`);
+        if (s.includes('ride')) items.push(`ride to ${places[0]} at 7pm`);
+        if (s.includes('order')) items.push(`order ${list[0].toLowerCase()}`);
+        if (s.startsWith('open')) items.push('open maps');
+        items.push(`search ${t}`);
+      }
+      hints.innerHTML = items.slice(0,6).map(v=>`<button class="rounded-xl glass card px-3 py-2 text-left tap" data-s="${v}">${v}</button>`).join('');
+      [...hints.querySelectorAll('[data-s]')].forEach(b=>b.onclick=()=>{ qEl.value=b.dataset.s; });
+    };
+    qEl.addEventListener('input', e=>renderHints(e.target.value)); renderHints();
+
+    /* ====== Intent parsing ====== */
+    function parseIntent(q){
+      const s=q.trim(); if(!s) return {type:'none'};
+      const pay = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
+      if (pay) return {type:'pay', to:pay[1], amount:parseFloat(pay[2].replace(',','.')), note:pay[3]||''};
+      const ride = s.match(/^ride\s+(?:to\s+)?(.+?)(?:\s+at\s+(.+))?$/i);
+      if (ride) return {type:'ride', where:ride[1], when:ride[2]||'soon'};
+      const order = s.match(/^order\s+(.+)$/i); if (order) return {type:'order', item:order[1]};
+      const weather = s.match(/^weather(?:\s+in\s+(.+))?/i); if (weather) return {type:'weather', where:weather[1]||'your area'};
+      const open = s.match(/^open\s+(.+)$/i); if (open) return {type:'open', target:open[1]};
+      return {type:'search', text:s.replace(/^search\s+/i,'')};
+    }
+
+    /* ====== In‑app search ====== */
+    async function omniaSearch(query){
+      if (!USE_APIS) {
+        return `<div class="rounded-xl glass card p-3">[Demo] I’d search for <b>${query}</b> and show summarized results here.</div>`;
+      }
+      const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&t=omnia`;
+      const wikiUrl = `https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(query)}&limit=3`;
+      const [ddgRes, wikiRes] = await Promise.allSettled([
+        fetch(ddgUrl).then(r=>r.json()),
+        fetch(wikiUrl).then(r=>r.json())
+      ]);
+      const ddg = ddgRes.status==='fulfilled'?ddgRes.value:null;
+      const wiki= wikiRes.status==='fulfilled'?wikiRes.value:null;
+
+      let html = '';
+      const abstract = ddg?.AbstractText || ddg?.Abstract || '';
+      if (abstract) html += `<div class="mb-3">
+        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Answer</div>
+        <div class="rounded-xl glass card p-3">${abstract}</div></div>`;
+
+      const topics = ddg?.RelatedTopics || []; const flat=[];
+      topics.forEach(t=>{ if(t.Topics) flat.push(...t.Topics); else flat.push(t); });
+      const links = flat.filter(t=>t.FirstURL && t.Text).slice(0,4);
+      if (links.length) html += `<div class="mb-3">
+        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Top results</div>
+        <div class="grid gap-2">
+          ${links.map(t=>`<a class="rounded-xl glass card p-3 block hover:bg-white/5" href="${t.FirstURL}" target="_blank" rel="noopener">
+            <div class="font-medium">${t.Text}</div>
+            <div class="text-xs text-white/60 mt-0.5">${new URL(t.FirstURL).hostname}</div></a>`).join('')}
+        </div></div>`;
+
+      const hits = wiki?.pages || wiki?.results || [];
+      if (hits.length) html += `<div class="mb-3">
+        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">From Wikipedia</div>
+        <div class="grid gap-2">
+          ${hits.map(p=>{
+            const title=p.title||p.key||''; const desc=p.description||p.excerpt||'';
+            const thumb = p.thumbnail?.url || (p?.thumbnail ? `https:${p.thumbnail}` : '');
+            return `<a class="rounded-xl glass card p-3 block hover:bg-white/5"
+              href="https://en.wikipedia.org/wiki/${encodeURIComponent(title.replaceAll(' ','_'))}" target="_blank" rel="noopener">
+              <div class="flex items-start gap-3">
+                ${thumb?`<img src="${thumb}" alt="" class="w-12 h-12 rounded-md object-cover"/>`:''}
+                <div><div class="font-semibold leading-tight">${title}</div>
+                ${desc?`<div class="text-sm text-white/70 mt-0.5">${desc}</div>`:''}</div></div></a>`;
+          }).join('')}
+        </div></div>`;
+
+      const imgQ = encodeURIComponent(query);
+      const imgs = Array.from({length:6}).map((_,i)=>`
+        <img src="https://source.unsplash.com/400x300/?${imgQ}&sig=${i}" alt="${query}" class="w-full h-40 object-cover rounded-xl"/>`
+      ).join('');
+      html += `<div class="mb-2">
+        <div class="text-[12px] uppercase tracking-wide text-white/60 mb-1">Images</div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${imgs}</div></div>`;
+
+      if (!html) html = `<div class="rounded-xl glass card p-3">No in‑app results found. Try a different query.</div>`;
+      return html;
+    }
+
+    /* ====== Actions ====== */
+    function act(intent){
+      const t = typing();
+      const done = (html, delay=280)=> setTimeout(()=> t.parentElement.innerHTML = html, delay);
+
+      if (intent.type==='pay'){
+        const {to, amount, note} = intent;
+        const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
+        done(`💸 Preparing to send <b>€${amount.toFixed(2)}</b> to <b>${to}</b>${note?` for <i>${note}</i>`:''}.
+             <a class="underline" href="https://paypal.me/" target="_blank">Open payment</
