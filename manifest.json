@@ -1,29 +1,18 @@
 {
-  "name": "Omnia",
+  "name": "Omnia — One App for Everything",
   "short_name": "Omnia",
-  "description": "The AI super app — search, pay, ride, order, and more in one place.",
-  "start_url": "/Omnia-live/",
+  "description": "Ask anything. Omnia gets it done.",
+  "start_url": "/Omnia-live/?source=pwa",
+  "scope": "/Omnia-live/",
   "display": "standalone",
-  "background_color": "#0b0b0b",
-  "theme_color": "#0b0b0b",
-  "orientation": "portrait-primary",
+  "background_color": "#020617",
+  "theme_color": "#0b0f1a",
   "icons": [
-    {
-      "src": "/Omnia-live/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/Omnia-live/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/Omnia-live/icons/favicon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-256.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "icons/icon-384.png", "sizes": "384x384", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+  ],
+  "prefer_related_applications": false
 }
