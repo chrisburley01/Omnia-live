@@ -8,60 +8,122 @@
   <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background: radial-gradient(circle at top, #0f172a, #020617);
-      color: white;
-      font-family: system-ui, sans-serif;
-    }
-    .glass {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+    body{background:radial-gradient(60rem 40rem at 20% -10%,#1e293b,#020617 60%),#020617;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif}
+    .glass{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1)}
+    .btn{background:linear-gradient(90deg,#60a5fa,#6366f1);border-radius:.75rem;padding:.75rem 1rem}
+    .pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:.75rem;padding:.25rem .5rem;font-size:.7rem}
+    .tap{transition:transform .1s} .tap:active{transform:scale(.98)}
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
   <!-- Header -->
-  <header class="flex items-center justify-between px-4 py-3 glass sticky top-0 z-50">
-    <div class="flex items-center gap-3">
+  <header class="glass sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
       <img src="icons/icon-192.png" alt="Omnia Logo" class="w-10 h-10 rounded-lg" />
       <div>
-        <h1 class="text-xl font-bold">Omnia</h1>
+        <h1 class="text-xl font-bold leading-tight">Omnia</h1>
         <p class="text-xs text-gray-300">Ask anything. Omnia gets it done.</p>
       </div>
+      <div class="flex-1"></div>
+      <div class="hidden sm:flex gap-2">
+        <span class="pill">Private</span>
+        <span class="pill">Unified ID</span>
+        <span class="pill">OmniPay</span>
+      </div>
+      <button id="installBtn" class="px-3 py-1 bg-blue-500 rounded-lg text-sm hidden">Install</button>
     </div>
-    <button id="installBtn" class="px-3 py-1 bg-blue-500 rounded-lg text-sm hidden">Install</button>
   </header>
 
-  <!-- Search Bar -->
-  <main class="flex-1 max-w-3xl mx-auto w-full px-4 py-6">
-    <div class="flex gap-2 mb-6">
-      <input id="query" type="text" placeholder="Ask Omnia anything..."
-        class="flex-1 px-4 py-3 rounded-xl text-black" />
-      <button onclick="runSearch()" class="px-4 py-3 bg-blue-600 rounded-xl hover:bg-blue-500">Ask</button>
-    </div>
+  <!-- Main -->
+  <main class="flex-1 w-full">
+    <section class="max-w-3xl mx-auto w-full px-4 pt-6">
+      <!-- Search -->
+      <div class="flex gap-2 mb-4">
+        <input id="query" type="text" placeholder="Ask Omnia anything…  (e.g., pay @ari 20 • ride to Heathrow at 8pm • order oat milk)"
+               class="flex-1 px-4 py-3 rounded-xl text-black" />
+        <button onclick="runSearch()" class="btn tap">Ask</button>
+      </div>
+      <div id="results" class="space-y-4"></div>
+    </section>
 
-    <!-- Results -->
-    <div id="results" class="space-y-4"></div>
+    <!-- Modules -->
+    <section class="max-w-6xl mx-auto px-4 py-8">
+      <h3 class="text-sm uppercase tracking-wide text-gray-400 mb-3">Omnia Modules</h3>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <button data-open="pay" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">💳</div><div><p class="font-semibold">Payments</p><p class="text-xs text-gray-300">Send & request</p></div></div><span>›</span>
+        </button>
+        <button data-open="ride" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🚗</div><div><p class="font-semibold">Rides</p><p class="text-xs text-gray-300">Book & track</p></div></div><span>›</span>
+        </button>
+        <button data-open="order" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🛒</div><div><p class="font-semibold">Groceries</p><p class="text-xs text-gray-300">Smart list</p></div></div><span>›</span>
+        </button>
+        <button data-open="calendar" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">📆</div><div><p class="font-semibold">Calendar</p><p class="text-xs text-gray-300">Agenda & reminders</p></div></div><span>›</span>
+        </button>
+        <button data-open="messages" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">💬</div><div><p class="font-semibold">Messages</p><p class="text-xs text-gray-300">Unified inbox</p></div></div><span>›</span>
+        </button>
+        <button data-open="media" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🎵</div><div><p class="font-semibold">Media</p><p class="text-xs text-gray-300">Music & video</p></div></div><span>›</span>
+        </button>
+        <button data-open="health" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">❤️‍🩹</div><div><p class="font-semibold">Health</p><p class="text-xs text-gray-300">Snapshot & goals</p></div></div><span>›</span>
+        </button>
+        <button data-open="smarthome" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🏠</div><div><p class="font-semibold">Smart Home</p><p class="text-xs text-gray-300">Lights & devices</p></div></div><span>›</span>
+        </button>
+        <button data-open="bookings" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🧳</div><div><p class="font-semibold">Bookings</p><p class="text-xs text-gray-300">Flights & hotels</p></div></div><span>›</span>
+        </button>
+        <button data-open="maps" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🗺️</div><div><p class="font-semibold">Maps</p><p class="text-xs text-gray-300">Navigate</p></div></div><span>›</span>
+        </button>
+        <button data-open="id" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🪪</div><div><p class="font-semibold">ID & Passes</p><p class="text-xs text-gray-300">Wallet</p></div></div><span>›</span>
+        </button>
+        <button data-open="files" class="tap glass p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-white/10 grid place-items-center">🗂️</div><div><p class="font-semibold">Files</p><p class="text-xs text-gray-300">Docs & notes</p></div></div><span>›</span>
+        </button>
+      </div>
+    </section>
   </main>
 
+  <!-- Bottom Sheet -->
+  <div id="sheet" class="hidden fixed inset-0 z-50 bg-black/60 grid place-items-end">
+    <div class="w-full max-w-xl bg-slate-900 border-t border-white/10 p-4 rounded-t-2xl">
+      <div id="sheetBody"></div>
+      <button id="closeSheet" class="w-full mt-4 h-11 glass rounded-xl">Close</button>
+    </div>
+  </div>
+
   <!-- Footer -->
-  <footer class="text-center text-xs text-gray-500 py-4">
+  <footer class="text-center text-xs text-gray-500 py-6">
     © 2025 Omnia. One app. Every part of your life.
   </footer>
 
 <script>
+  /* ===== Backend URL (your Cloudflare Worker) ===== */
   const OMNIA_API = "https://ommia-search.chrisburley01.workers.dev";
 
+  /* ===== Search (Omnia in‑app) ===== */
   async function runSearch() {
     const q = document.getElementById("query").value.trim();
+    const out = document.getElementById("results");
     if (!q) return;
-    document.getElementById("results").innerHTML =
-      `<div class="glass p-4 rounded-xl">Searching for "${q}"...</div>`;
+    out.innerHTML = `<div class="glass p-4 rounded-xl">Searching for “${q}”…</div>`;
     try {
       const res = await fetch(`${OMNIA_API}/search?q=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error("API error");
       const data = await res.json();
       let html = "";
+
+      // Sources (unique domains)
+      const seen = new Set(); const src = [];
+      const addSrc = (url)=>{ try{ const h=new URL(url).hostname.replace(/^www\./,""); if(!seen.has(h)){seen.add(h); src.push({h,url});} }catch{} };
+      (data.links||[]).forEach(l=>addSrc(l.url)); (data.wiki||[]).forEach(w=>addSrc(w.url));
+      const sourcesRow = src.length ? `<div class="mt-2 text-xs text-gray-400">Sources: ${src.slice(0,5).map(s=>`<a href="${s.url}" target="_blank" class="underline hover:opacity-80">${s.h}</a>`).join(" · ")}</div>` : "";
 
       // Omnia Answer
       if (data.summary || data.abstract) {
@@ -69,9 +131,8 @@
           <div class="glass p-4 rounded-xl">
             <div class="text-sm uppercase text-gray-400 mb-2">Omnia Answer</div>
             <div>${(data.summary || data.abstract).replace(/\n/g, "<br>")}</div>
-            ${buildSources(data)}
-          </div>
-        `;
+            ${sourcesRow}
+          </div>`;
       }
 
       // Wikipedia
@@ -88,8 +149,7 @@
                     <div class="text-xs text-gray-400">${p.description || ""}</div>
                   </div>
                 </div>
-              </a>
-            `).join("")}
+              </a>`).join("")}
           </div>
         </div>`;
       }
@@ -103,8 +163,7 @@
               <a href="${l.url}" target="_blank" class="glass p-3 rounded-xl block hover:bg-white/5">
                 <div class="font-medium">${l.title}</div>
                 <div class="text-xs text-gray-400">${l.host}</div>
-              </a>
-            `).join("")}
+              </a>`).join("")}
           </div>
         </div>`;
       }
@@ -119,44 +178,153 @@
         </div>`;
       }
 
-      if (!html) html = `<div class="glass p-4 rounded-xl">No results found for "${q}".</div>`;
-      document.getElementById("results").innerHTML = html;
-
+      out.innerHTML = html || `<div class="glass p-4 rounded-xl">No results found for “${q}”.</div>`;
     } catch (err) {
-      document.getElementById("results").innerHTML =
-        `<div class="glass p-4 rounded-xl">Error: ${err.message}</div>`;
+      out.innerHTML = `<div class="glass p-4 rounded-xl">Couldn’t reach Omnia API. Check Worker URL and try again.</div>`;
     }
   }
 
-  function buildSources(data) {
-    const urls = new Set();
-    const sources = [];
-    [...(data.links || []), ...(data.wiki || [])].forEach(item => {
-      try {
-        const u = new URL(item.url);
-        const host = u.hostname.replace(/^www\./, "");
-        if (!urls.has(host)) {
-          urls.add(host);
-          sources.push(`<a href="${item.url}" target="_blank" class="underline hover:opacity-80">${host}</a>`);
-        }
-      } catch {}
-    });
-    return sources.length ? `<div class="mt-2 text-xs text-gray-400">Sources: ${sources.join(" · ")}</div>` : "";
-  }
+  /* ===== Bottom Sheet helpers ===== */
+  const sheet = document.getElementById("sheet");
+  const sheetBody = document.getElementById("sheetBody");
+  const openSheet = (html)=>{ sheetBody.innerHTML = html; sheet.classList.remove("hidden"); };
+  const closeSheet = ()=> sheet.classList.add("hidden");
+  document.getElementById("closeSheet").addEventListener("click", closeSheet);
+  sheet.addEventListener("click",(e)=>{ if(e.target===sheet) closeSheet(); });
 
-  // Install banner
-  let deferredPrompt;
-  const installBtn = document.getElementById("installBtn");
-  window.addEventListener("beforeinstallprompt", e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.classList.remove("hidden");
+  // Simple local memory for demo personalization
+  const mem = {
+    get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} },
+    set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} }
+  };
+  const contacts = mem.get("omnia:contacts", ["ari","bea","chen"]);
+  const places = mem.get("omnia:places", ["Heathrow","Atocha Station"]);
+  const list = mem.get("omnia:list", ["Oat milk","Eggs","Espresso pods"]);
+
+  /* ===== Module sheets ===== */
+  function sheetPay(preset={}){ openSheet(`
+    <h3 class="text-lg font-semibold">Send money</h3>
+    <p class="text-sm text-gray-300 mb-3">OmniPay secure transfer</p>
+    <label class="text-xs text-gray-400">Recipient</label>
+    <input id="payTo" class="w-full h-11 rounded-lg bg-white/10 px-3 mb-3 text-white" placeholder="@username" value="${preset.to||contacts[0]}">
+    <label class="text-xs text-gray-400">Amount</label>
+    <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-lg bg-white/10 px-3 mb-3 text-white" value="${preset.amount||20}">
+    <label class="text-xs text-gray-400">Note</label>
+    <input id="payNote" class="w-full h-11 rounded-lg bg-white/10 px-3 text-white" placeholder="What’s this for?" value="${preset.note||''}">
+    <div class="flex gap-2 mt-4">
+      <button id="sendNow" class="flex-1 h-11 btn tap">Send</button>
+      <a id="sendPaypal" class="flex-1 h-11 glass rounded-xl grid place-items-center tap" target="_blank">PayPal</a>
+    </div>
+  `);}
+  function sheetRide(plan={}){ openSheet(`
+    <h3 class="text-lg font-semibold">Ride options</h3>
+    <p class="text-sm text-gray-300 mb-3">Destination: <b>${plan.where||places[0]}</b> • When: <b>${plan.when||'soon'}</b></p>
+    <div class="grid gap-2">
+      <a class="px-3 py-3 glass rounded-xl block tap" target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.where||places[0])}">Open in Google Maps</a>
+      <a class="px-3 py-3 glass rounded-xl block tap" target="_blank" href="https://m.uber.com/ul/">Open Uber</a>
+    </div>
+    <button class="w-full mt-4 h-11 btn tap" id="bookRide">Book best option</button>
+  `);}
+  function sheetOrder(item){ openSheet(`
+    <h3 class="text-lg font-semibold">Confirm order</h3>
+    <p class="text-sm text-gray-300">Groceries in ~25 minutes.</p>
+    <ul class="list-disc ml-6 my-3 text-sm">
+      ${[...list.slice(0,3), item ? `+ ${item}` : ''].filter(Boolean).map(x=>`<li>${x}</li>`).join('')}
+    </ul>
+    <div class="grid gap-2">
+      <a class="px-3 py-3 glass rounded-xl block tap" target="_blank" href="https://www.amazon.co.uk/s?k=${encodeURIComponent(item||'oat milk eggs')}">Search Amazon</a>
+      <a class="px-3 py-3 glass rounded-xl block tap" target="_blank" href="https://www.google.com/search?q=${encodeURIComponent(item||'groceries near me')}">Search Google</a>
+    </div>
+    <button class="w-full mt-4 h-11 btn tap" id="payOrder">Pay with OmniPay</button>
+  `);}
+  function sheetCalendar(){ openSheet(`
+    <h3 class="text-lg font-semibold">Today</h3>
+    <div class="mt-2 space-y-2 text-sm">
+      <div class="flex items-center justify-between"><span>Client meeting</span><span>10:00</span></div>
+      <div class="flex items-center justify-between"><span>Anniversary dinner</span><span>19:00</span></div>
+      <div class="flex items-center justify-between"><span>Daily Planner AI</span><span>in 12 min</span></div>
+    </div>
+  `);}
+  function sheetMessages(){ openSheet(`
+    <h3 class="text-lg font-semibold">Messages</h3>
+    <div class="mt-2 text-sm text-gray-300">Unified inbox coming soon. Reply, email, SMS in one place.</div>
+  `);}
+  function sheetMedia(){ openSheet(`
+    <h3 class="text-lg font-semibold">Evening wind‑down</h3>
+    <div class="flex items-center gap-3 mt-2">
+      <div class="w-12 h-12 rounded-lg bg-white/10 grid place-items-center">🎵</div>
+      <div class="flex-1"><div class="font-medium">Calm Focus</div><div class="text-sm text-gray-300">Lo‑fi & ambient · 45 min</div></div>
+      <button class="h-10 px-3 btn">Play</button>
+    </div>
+  `);}
+  function sheetHealth(){ openSheet(`
+    <h3 class="text-lg font-semibold">Health snapshot</h3>
+    <div class="space-y-2 text-sm mt-2">
+      <div class="flex items-center justify-between"><span>Steps</span><span>7,420</span></div>
+      <div class="flex items-center justify-between"><span>Recovery</span><span>Good</span></div>
+    </div>
+  `);}
+  function sheetSmartHome(){ openSheet(`
+    <h3 class="text-lg font-semibold">Smart Home</h3>
+    <div class="grid gap-2 mt-2">
+      <button class="h-11 glass rounded-xl tap">🟡 Turn on living room lights</button>
+      <button class="h-11 glass rounded-xl tap">🔒 Lock front door</button>
+      <button class="h-11 glass rounded-xl tap">🌡️ Set thermostat to 20°C</button>
+    </div>
+  `);}
+  function sheetBookings(){ openSheet(`
+    <h3 class="text-lg font-semibold">Bookings</h3>
+    <div class="text-sm text-gray-300 mt-2">Search flights, hotels, trains in one view (coming soon).</div>
+  `);}
+  function sheetMaps(){ openSheet(`
+    <h3 class="text-lg font-semibold">Maps</h3>
+    <div class="mt-2"><a class="underline" target="_blank" href="https://maps.google.com">Open Maps</a></div>
+  `);}
+  function sheetID(){ openSheet(`
+    <h3 class="text-lg font-semibold">ID & Passes</h3>
+    <div class="text-sm text-gray-300 mt-2">Store ID, boarding passes, and tickets securely.</div>
+  `);}
+  function sheetFiles(){ openSheet(`
+    <h3 class="text-lg font-semibold">Files</h3>
+    <div class="text-sm text-gray-300 mt-2">Docs, notes, and shared links (coming soon).</div>
+  `);}
+
+  // Open module sheets
+  document.querySelectorAll("[data-open]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const m = btn.getAttribute("data-open");
+      ({pay:sheetPay, ride:sheetRide, order:sheetOrder, calendar:sheetCalendar, messages:sheetMessages,
+        media:sheetMedia, health:sheetHealth, smarthome:sheetSmartHome, bookings:sheetBookings,
+        maps:sheetMaps, id:sheetID, files:sheetFiles}[m])?.();
+    });
   });
-  installBtn.addEventListener("click", () => {
-    installBtn.classList.add("hidden");
-    deferredPrompt.prompt();
-    deferredPrompt = null;
+
+  // Sheet action buttons
+  sheet.addEventListener("click",(e)=>{
+    if (e.target.id === "sendNow") {
+      const to = document.getElementById("payTo").value.trim();
+      const amt = parseFloat(document.getElementById("payAmt").value);
+      if (!to) return alert("Enter recipient");
+      if (!Number.isFinite(amt) || amt<=0) return alert("Enter valid amount");
+      alert(`Sent €${amt.toFixed(2)} to ${to}`);
+      // save contact
+      const clean = to.replace(/^@/,'');
+      if (!contacts.includes(clean)) { contacts.unshift(clean); mem.set("omnia:contacts", contacts.slice(0,6)); }
+      closeSheet();
+    }
+    if (e.target.id === "payOrder") { alert("Order paid • ETA ~25 min"); closeSheet(); }
+    if (e.target.id === "bookRide") { alert("Ride booked • driver en route 🚗"); closeSheet(); }
+    if (e.target.id === "sendPaypal") {
+      const to = document.getElementById("payTo").value.trim().replace(/^@/,'');
+      const amt = document.getElementById("payAmt").value;
+      e.target.href = `https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
+    }
   });
+
+  /* ===== PWA install (Add to Home Screen) ===== */
+  let deferredPrompt; const installBtn = document.getElementById("installBtn");
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; installBtn.classList.remove("hidden"); });
+  installBtn.addEventListener("click", async () => { installBtn.classList.add("hidden"); deferredPrompt?.prompt(); deferredPrompt = null; });
 </script>
 </body>
 </html>
