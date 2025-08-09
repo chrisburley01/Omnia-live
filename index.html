@@ -1,361 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  />
-  <title>Omnia — AI Assistant</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Omnia — AI Super App</title>
 
   <!-- PWA (GitHub Pages absolute paths) -->
-  <link rel="manifest" href="/Omnia-live/manifest.json" />
-  <link rel="apple-touch-icon" href="/Omnia-live/icons/icon-180.png" />
-  <meta name="theme-color" content="#0b0b0b" />
+  <link rel="manifest" href="/Omnia-live/manifest.json"/>
+  <link rel="apple-touch-icon" href="/Omnia-live/icons/icon-180.png"/>
+  <meta name="theme-color" content="#0b0b0b"/>
 
-  <!-- Tailwind (CDN) -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto'] },
+          colors: { brand: { 500:'#7c9eff', 600:'#5b87ff', 700:'#3e66ff' } },
           boxShadow: {
-            glow: "0 0 0 2px rgba(99,102,241,.25), 0 0 30px rgba(99,102,241,.35)",
-          },
-          colors: {
-            brand: { 500: "#6366f1", 400: "#818cf8" },
-          },
-        },
-      },
-    };
+            glow: '0 0 0 2px rgba(124,158,255,.35), 0 0 42px rgba(124,158,255,.35)',
+            soft: '0 10px 30px rgba(0,0,0,.25)'
+          }
+        }
+      }
+    }
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(10px); }
-    .gradient-ring {
-      position: relative;
-      border-radius: 16px;
-      background: radial-gradient(1200px 200px at 50% 0%,
-        rgba(99,102,241,.25), transparent 60%);
+    body { font-family: Inter, ui-sans-serif, system-ui; color: #fff; }
+    /* Rich background: animated gradient + noise film */
+    .bg-omnia {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(124,158,255,.22), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(99,102,241,.18), transparent 60%),
+        linear-gradient(180deg, #0a0b10 0%, #06070a 100%);
     }
-    .type-cursor::after { content: '▍'; animation: blink 1s steps(1) infinite; opacity: .7; }
-    @keyframes blink { 50% { opacity: 0; } }
+    .bg-omnia::after {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="1" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.04"/></svg>');
+      mix-blend-mode: soft-light;
+      animation: grain 6s steps(10) infinite;
+    }
+    @keyframes grain { 0%{transform:translate(0,0)} 100%{transform:translate(-128px,64px)} }
+
+    .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(12px); }
+    .card { border:1px solid rgba(255,255,255,.10); border-radius:1rem; }
+    .ringgrad { box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), inset 0 0 0 6px rgba(124,158,255,.08); }
+    .ai-pulse { animation: aip 1.4s ease-in-out infinite; }
+    @keyframes aip { 0%,100%{opacity:.5} 50%{opacity:1} }
+    .tap { transition: transform .12s; } .tap:active { transform: scale(.98); }
+
+    .type-cursor::after { content:'▍'; opacity:.7; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50%{opacity:0} }
   </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-b from-[#0b0b0f] to-black text-white">
+<body class="min-h-screen">
+  <div class="bg-omnia"></div>
+
   <!-- Top bar -->
-  <header class="sticky top-0 z-40 glass border-b border-white/10">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
-      <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500/25 to-brand-500/25 grid place-items-center">✨</div>
+  <header class="sticky top-0 z-40 glass card shadow-soft">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500/30 to-brand-600/30 grid place-items-center shadow-glow">✨</div>
       <div class="leading-tight">
         <h1 class="text-lg font-semibold">Omnia</h1>
-        <p class="text-[11px] text-white/60">Ask anything. Omnia gets it done.</p>
+        <p class="text-[11px] text-white/70">Ask anything. Omnia gets it done.</p>
       </div>
       <div class="flex-1"></div>
-      <div class="hidden sm:flex gap-2">
-        <span class="px-2 py-1 text-[11px] rounded-full bg-white/10">Private</span>
-        <span class="px-2 py-1 text-[11px] rounded-full bg-white/10">Unified ID</span>
-        <span class="px-2 py-1 text-[11px] rounded-full bg-white/10">OmniPay</span>
+      <div class="hidden sm:flex gap-2 text-[11px]">
+        <span class="px-2 py-1 rounded-full glass card">Private</span>
+        <span class="px-2 py-1 rounded-full glass card">Unified ID</span>
+        <span class="px-2 py-1 rounded-full glass card">OmniPay</span>
       </div>
     </div>
   </header>
 
-  <!-- Hero + Input -->
-  <section class="max-w-5xl mx-auto px-4 pt-8 gradient-ring">
+  <!-- Hero -->
+  <section class="max-w-3xl mx-auto px-4 pt-8">
     <div class="text-center space-y-2">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/70">
-        <span>⚡</span> Omnia understands tasks & questions
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass card text-xs text-white/80">
+        <span class="ai-pulse">⚡</span> AI that understands actions & answers
       </div>
-      <h2 class="text-2xl sm:text-3xl font-semibold">Ask Omnia anything…</h2>
-      <p class="text-white/60 text-sm">Examples: <em>pay Ari 20 for lunch</em> • <em>ride to Heathrow at 8pm</em> • <em>order oat milk</em></p>
+      <h2 class="text-3xl sm:text-4xl font-semibold">Ask Omnia anything…</h2>
+      <p class="text-white/70 text-sm">Examples: <em>pay Ari 20 for lunch</em> • <em>ride to Heathrow at 8pm</em> • <em>order oat milk</em> • <em>weather in London</em></p>
     </div>
 
-    <div class="mt-5 relative">
-      <form id="intentForm" class="relative">
-        <input id="intentInput" autocomplete="off"
-          class="w-full h-14 rounded-2xl pl-5 pr-28 bg-white/10 border border-white/10 placeholder-white/50 outline-none shadow-glow focus:shadow-glow"
-          placeholder="Type a request or question…">
-        <button class="absolute right-2 top-1/2 -translate-y-1/2 h-10 px-4 rounded-xl bg-white text-black font-medium">
-          Ask
-        </button>
-      </form>
-
-      <!-- suggestions -->
-      <div id="suggestions" class="hidden absolute mt-2 w-full rounded-xl glass border border-white/10 overflow-hidden">
-        <button data-s="pay Ari 20 for lunch" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">💳 Pay Ari 20 for lunch</button>
-        <button data-s="ride to Atocha at 7pm" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">🚗 Ride to Atocha at 7pm</button>
-        <button data-s="order oat milk and eggs" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">🛒 Order oat milk and eggs</button>
-        <button data-s="what's the weather tomorrow in London?" class="w-full text-left px-4 py-3 hover:bg-white/5 text-sm">🌦️ Weather tomorrow in London?</button>
+    <!-- Oracle -->
+    <form id="oracle" class="relative mt-6">
+      <div class="relative rounded-2xl glass card ringgrad shadow-glow">
+        <div class="flex items-center gap-3 px-4 pt-3">
+          <div class="w-8 h-8 rounded-xl bg-white/10 grid place-items-center ai-pulse">✨</div>
+          <div class="text-xs text-white/60">Ask Omnia…</div>
+          <div class="flex-1"></div>
+          <div class="hidden sm:block text-[10px] text-white/60">Try: pay @ari 20 • ride to Atocha • order oat milk</div>
+        </div>
+        <div class="px-4 pb-3">
+          <input id="q" autocomplete="off" class="w-full h-14 bg-transparent outline-none text-base placeholder-white/50" placeholder="Type a request or question"/>
+        </div>
       </div>
-    </div>
+
+      <!-- Smart suggestions -->
+      <div id="hints" class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div>
+
+      <button class="mt-4 w-full h-12 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 shadow-glow tap font-medium">
+        Ask Omnia
+      </button>
+    </form>
   </section>
 
-  <!-- Chat / Results -->
-  <main class="max-w-5xl mx-auto px-4 py-6">
-    <div id="thread" class="space-y-4"></div>
+  <!-- AI feed -->
+  <section class="max-w-3xl mx-auto px-4 mt-6 space-y-4" id="feed"></section>
 
-    <!-- Quick actions -->
-    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-      <button class="glass border border-white/10 rounded-xl p-4 text-left hover:bg-white/5" id="qaPay">
-        <div class="text-2xl mb-1">💳</div>
-        <div class="font-medium">Send money</div>
-        <div class="text-xs text-white/60">OmniPay quick transfer</div>
-      </button>
-      <button class="glass border border-white/10 rounded-xl p-4 text-left hover:bg-white/5" id="qaRide">
-        <div class="text-2xl mb-1">🚗</div>
-        <div class="font-medium">Book a ride</div>
-        <div class="text-xs text-white/60">Maps / Uber deeplink</div>
-      </button>
-      <button class="glass border border-white/10 rounded-xl p-4 text-left hover:bg-white/5" id="qaOrder">
-        <div class="text-2xl mb-1">🛒</div>
-        <div class="font-medium">Order groceries</div>
-        <div class="text-xs text-white/60">Smart shopping list</div>
-      </button>
+  <!-- Quick modules -->
+  <section class="max-w-6xl mx-auto px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <button id="m-pay" class="tap glass card p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">💳</div>
+        <div><p class="font-semibold leading-tight">Payments</p><p class="text-xs text-white/70">Send & request</p></div>
+      </div><span>›</span>
+    </button>
+    <button id="m-ride" class="tap glass card p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🚗</div>
+        <div><p class="font-semibold leading-tight">Rides</p><p class="text-xs text-white/70">Book & track</p></div>
+      </div><span>›</span>
+    </button>
+    <button id="m-order" class="tap glass card p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">🛒</div>
+        <div><p class="font-semibold leading-tight">Groceries</p><p class="text-xs text-white/70">Smart list</p></div>
+      </div><span>›</span>
+    </button>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="lg:hidden sticky bottom-0 glass card">
+    <div class="grid grid-cols-4 gap-1 p-2 max-w-3xl mx-auto">
+      <button class="px-3 py-2 rounded-2xl glass card">Home</button>
+      <button id="navPay" class="px-3 py-2 rounded-2xl">Pay</button>
+      <button id="navRide" class="px-3 py-2 rounded-2xl">Services</button>
+      <button id="navYou" class="px-3 py-2 rounded-2xl">You</button>
     </div>
-  </main>
+  </nav>
 
   <!-- Bottom Sheet -->
   <div id="sheet" class="hidden fixed inset-0 z-50 bg-black/60 grid place-items-end">
-    <div class="w-full max-w-xl bg-slate-900 border-t border-white/10 p-4 rounded-t-2xl">
+    <div class="w-full max-w-xl bg-slate-900 border-t border-white/10 p-4 rounded-t-2xl card">
       <div id="sheetBody"></div>
-      <button id="closeSheet" class="w-full mt-4 h-11 rounded-xl bg-white/10">Close</button>
+      <button id="closeSheet" class="w-full mt-4 h-11 rounded-xl glass card">Close</button>
     </div>
   </div>
 
   <!-- Install banner -->
   <div id="installBanner" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
-    <div class="glass border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-3">
+    <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
       <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">📲</div>
       <div class="text-sm">
         <div class="font-semibold">Install Omnia</div>
-        <div class="text-white/60">Add to your home screen</div>
+        <div class="text-white/70">Add to your home screen</div>
       </div>
       <div class="flex gap-2">
         <button id="installNow" class="px-3 py-2 rounded-xl bg-white text-black">Install</button>
-        <button id="installLater" class="px-3 py-2 rounded-xl bg-white/10">Later</button>
+        <button id="installLater" class="px-3 py-2 rounded-xl glass card">Later</button>
       </div>
     </div>
   </div>
 
   <!-- Update toast -->
   <div id="updateToast" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden">
-    <div class="glass border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-3">
+    <div class="glass card rounded-2xl px-4 py-3 flex items-center gap-3">
       <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center">⬆️</div>
-      <div class="text-sm"><div class="font-semibold">Update available</div><div class="text-white/60">Tap to refresh</div></div>
+      <div class="text-sm"><div class="font-semibold">Update available</div><div class="text-white/70">Tap to refresh</div></div>
       <button id="refreshApp" class="px-3 py-2 rounded-xl bg-white text-black">Refresh</button>
     </div>
   </div>
 
   <script>
-    // --- Service worker (updates toast) ---
+    /* ---------- PWA registration & banners ---------- */
     let newWorker;
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/Omnia-live/service-worker.js").then((reg) => {
-        reg.addEventListener("updatefound", () => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/Omnia-live/service-worker.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
           newWorker = reg.installing;
-          newWorker.addEventListener("statechange", () => {
-            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-              document.getElementById("updateToast").classList.remove("hidden");
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              document.getElementById('updateToast').classList.remove('hidden');
             }
           });
         });
       });
-      navigator.serviceWorker.addEventListener("controllerchange", () => location.reload());
+      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
     }
-    document.getElementById("refreshApp").onclick = () => {
+    document.getElementById('refreshApp').onclick = () => {
       if (navigator.serviceWorker?.controller) {
-        navigator.serviceWorker.controller.postMessage({ type: "SKIP_WAITING" });
+        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
       }
     };
 
-    // --- Install banner ---
+    // A2HS banner
     let deferredPrompt = null;
-    window.addEventListener("beforeinstallprompt", (e) => {
+    window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault(); deferredPrompt = e;
-      document.getElementById("installBanner").classList.remove("hidden");
+      document.getElementById('installBanner').classList.remove('hidden');
     });
-    document.getElementById("installNow").onclick = async () => {
+    document.getElementById('installNow').onclick = async () => {
       if (!deferredPrompt) return;
       deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null;
-      document.getElementById("installBanner").classList.add("hidden");
+      document.getElementById('installBanner').classList.add('hidden');
     };
-    document.getElementById("installLater").onclick = () =>
-      document.getElementById("installBanner").classList.add("hidden");
+    document.getElementById('installLater').onclick = () =>
+      document.getElementById('installBanner').classList.add('hidden');
 
-    // --- Simple local memory ---
-    const memory = JSON.parse(localStorage.getItem("omnia:mem") || "{}");
-    const saveMem = () => localStorage.setItem("omnia:mem", JSON.stringify(memory));
+    /* ---------- Memory ---------- */
+    const mem = {
+      get: (k,d)=>{ try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+      set: (k,v)=>{ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+    };
+    const contacts = mem.get('omnia:contacts', ['ari','bea','chen']);
+    const places = mem.get('omnia:places', ['Atocha Station','Heathrow']);
+    const list = mem.get('omnia:list', ['Oat milk','Eggs','Espresso pods']);
 
-    // --- Helpers ---
-    const thread = document.getElementById("thread");
-    const sheet = document.getElementById("sheet");
-    const sheetBody = document.getElementById("sheetBody");
-    const openSheet = (html) => { sheetBody.innerHTML = html; sheet.classList.remove("hidden"); };
-    const closeSheet = () => sheet.classList.add("hidden");
-    document.getElementById("closeSheet").addEventListener("click", closeSheet);
-    sheet.addEventListener("click", (e) => { if (e.target === sheet) closeSheet(); });
-
-    function msgMine(text) {
-      const el = document.createElement("div");
-      el.className = "flex justify-end";
-      el.innerHTML = `<div class="max-w-[85%] rounded-2xl bg-white text-black px-4 py-3">${text}</div>`;
-      thread.appendChild(el);
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    /* ---------- Hints & input ---------- */
+    const qEl = document.getElementById('q');
+    const hints = document.getElementById('hints');
+    function renderHints(text='') {
+      const s = text.trim().toLowerCase(); const items=[];
+      if(!s){ items.push('pay @ari 20 for lunch','ride to Atocha at 7pm','order oat milk','weather in London','open maps','search dinner ideas'); }
+      else{
+        if ('pay'.startsWith(s)||s.startsWith('pay')) items.push(`pay @${contacts[0]} 20`);
+        if (s.includes('ride')||'ride'.startsWith(s)) items.push(`ride to ${places[0]} at 7pm`);
+        if (s.includes('order')||'order'.startsWith(s)) items.push(`order ${list[0].toLowerCase()}`);
+        if (s.startsWith('open')) items.push('open maps');
+        if (s.includes('weather')) items.push('weather in London');
+        items.push(`search ${text}`);
+      }
+      hints.innerHTML = items.slice(0,6).map(v=>`<button class="rounded-xl glass card px-3 py-2 text-left tap" data-s="${v}">${v}</button>`).join('');
+      [...hints.querySelectorAll('[data-s]')].forEach(b => b.onclick = () => { qEl.value = b.dataset.s; });
     }
-    function msgBot(text, thinking=false) {
-      const el = document.createElement("div");
-      el.className = "flex";
-      el.innerHTML = `<div class="max-w-[85%] rounded-2xl glass border border-white/10 px-4 py-3">
-        <div class="${thinking ? 'type-cursor' : ''}" id="botText">${thinking ? 'Omnia is thinking…' : text}</div>
-      </div>`;
-      thread.appendChild(el);
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-      return el.querySelector("#botText");
-    }
+    qEl.addEventListener('input', e => renderHints(e.target.value));
+    renderHints('');
 
-    // --- Intent parsing ---
+    /* ---------- AI feed helpers ---------- */
+    const feed = document.getElementById('feed');
+    const bubble = (html, mine=false) => {
+      const wrap = document.createElement('div');
+      wrap.className = mine ? 'flex justify-end' : 'flex';
+      wrap.innerHTML = `<div class="max-w-[85%] ${mine?'bg-white text-black':'glass card'} px-4 py-3 rounded-2xl shadow-soft">${html}</div>`;
+      feed.append(wrap);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      return wrap;
+    };
+    const thinking = (t='Omnia is thinking…') => {
+      const el = bubble(`<div class="type-cursor text-white/80">${t}</div>`);
+      return el.querySelector('.type-cursor');
+    };
+
+    /* ---------- Intent parsing ---------- */
     function parseIntent(q) {
       const s = q.trim();
-      if (!s) return { type: "none" };
-      // pay <who> <amount> [for <note>]
+      if (!s) return {type:'none'};
       const pay = s.match(/^pay\s+(@?\w+)\s+([\d.,]+)(?:\s+for\s+(.+))?$/i);
-      if (pay) return { type: "pay", to: pay[1], amount: parseFloat(pay[2].replace(",",".")), note: pay[3]||"" };
+      if (pay) return {type:'pay', to:pay[1], amount:parseFloat(pay[2].replace(',','.')), note:pay[3]||''};
       const ride = s.match(/^ride\s+(?:to\s+)?(.+?)(?:\s+at\s+(.+))?$/i);
-      if (ride) return { type: "ride", where: ride[1], when: ride[2] || "soon" };
+      if (ride) return {type:'ride', where:ride[1], when:ride[2]||'soon'};
       const order = s.match(/^order\s+(.+)$/i);
-      if (order) return { type: "order", item: order[1] };
-      const weather = s.match(/^weather(?:\s+in\s+(.+))?(?:\s+tomorrow)?\??$/i);
-      if (weather) return { type: "weather", where: weather[1] || memory.city || "your area" };
-      return { type: "question", text: s };
+      if (order) return {type:'order', item:order[1]};
+      const weather = s.match(/^weather(?:\s+in\s+(.+))?/i);
+      if (weather) return {type:'weather', where:weather[1]||'your area'};
+      const open = s.match(/^open\s+(.+)$/i);
+      if (open) return {type:'open', target:open[1]};
+      return {type:'search', text:s.replace(/^search\s+/i,'')};
     }
 
-    // --- Renderers / actions ---
-    function renderPay(p = {}) {
-      openSheet(`
-        <h3 class="text-lg font-semibold">Send money</h3>
-        <p class="text-sm text-white/60 mb-3">OmniPay secure transfer</p>
-        <label class="text-xs text-white/60">Recipient</label>
-        <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username or IBAN" value="${p.to||memory.lastRecipient||''}">
-        <label class="text-xs text-white/60">Amount</label>
-        <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${p.amount||20}">
-        <label class="text-xs text-white/60">Note</label>
-        <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${p.note||''}">
-        <div class="flex gap-2 mt-4">
-          <button id="sendNow" class="flex-1 h-11 rounded-xl bg-white text-black">Send</button>
-          <a id="sendPaypal" class="flex-1 h-11 rounded-xl bg-white/10 grid place-items-center" target="_blank">PayPal</a>
-        </div>
-      `);
-    }
-    function renderRide(plan = {}) {
-      const q = encodeURIComponent(plan.where || "Destination");
-      openSheet(`
-        <h3 class="text-lg font-semibold">Ride options</h3>
-        <p class="text-sm text-white/60 mb-3">Destination: <b>${plan.where||'—'}</b> • When: <b>${plan.when||'soon'}</b></p>
-        <div class="grid gap-2">
-          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
-             href="https://www.google.com/maps/dir/?api=1&destination=${q}">Open in Google Maps</a>
-          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
-             href="https://m.uber.com/ul/">Open Uber</a>
-        </div>
-        <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="bookRide">Book best option</button>
-      `);
-    }
-    function renderOrder(item) {
-      openSheet(`
-        <h3 class="text-lg font-semibold">Confirm order</h3>
-        <p class="text-sm text-white/60">Groceries in ~25 minutes.</p>
-        <ul class="list-disc ml-6 my-3 text-sm">
-          <li>Oat milk</li><li>Eggs</li><li>Espresso pods</li>${item ? `<li><b>+ ${item}</b></li>` : ""}
-        </ul>
-        <div class="grid gap-2">
-          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
-             href="https://www.amazon.co.uk/s?k=${encodeURIComponent(item||'oat milk eggs')}">Search Amazon</a>
-          <a class="px-3 py-3 rounded-xl bg-white/10 text-left block" target="_blank"
-             href="https://www.google.com/search?q=${encodeURIComponent(item||'groceries near me')}">Search Google</a>
-        </div>
-        <button class="w-full mt-4 h-11 rounded-xl bg-white text-black" id="payOrder">Pay with OmniPay</button>
-      `);
-    }
+    /* ---------- Actions ---------- */
+    function act(intent) {
+      const t = thinking();
+      const done = (html, ms=380) => setTimeout(()=> t.parentElement.outerHTML = `<div class="max-w-[85%] glass card px-4 py-3 rounded-2xl shadow-soft">${html}</div>`, ms);
 
-    // Delegate clicks inside sheet
-    sheet.addEventListener("click", (e) => {
-      if (e.target.id === "sendNow") {
-        const to = document.getElementById("payTo").value.trim();
-        const amt = parseFloat(document.getElementById("payAmt").value);
-        if (!to) return alert("Enter recipient");
-        if (!Number.isFinite(amt) || amt <= 0) return alert("Enter valid amount");
-        memory.lastRecipient = to; saveMem();
-        alert(`Sent €${amt.toFixed(2)} to ${to}`); closeSheet();
+      if (intent.type==='pay') {
+        const {to, amount, note} = intent;
+        const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
+        done(`💸 Preparing to send <b>€${amount.toFixed(2)}</b> to <b>${to}</b>${note?` for <i>${note}</i>`:''}. <button id="openPay" class="underline">Open payment app</button>`);
+        setTimeout(()=>{ const a=document.getElementById('openPay'); if(a) a.onclick=()=>window.open('https://paypal.me/','_blank'); },420);
+        return;
       }
-      if (e.target.id === "bookRide") { alert("Ride booked • driver en route 🚗"); closeSheet(); }
-      if (e.target.id === "payOrder") { alert("Order paid • ETA ~25 min"); closeSheet(); }
-      if (e.target.id === "sendPaypal") {
-        const to = document.getElementById("payTo").value.trim().replace(/^@/,'');
-        const amt = document.getElementById("payAmt").value;
-        e.target.href = `https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
+      if (intent.type==='ride') {
+        const {where, when} = intent; if (!places.includes(where)) { places.unshift(where); mem.set('omnia:places', places.slice(0,6)); }
+        const gm = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`;
+        done(`🚗 Ride plan → <b>${where}</b> <span class="text-white/70">(${when})</span><br/><a class="underline" href="${gm}" target="_blank">Open Maps</a>`);
+        return;
       }
-    });
-
-    // --- Suggestions ---
-    const suggestions = document.getElementById("suggestions");
-    const input = document.getElementById("intentInput");
-    input.addEventListener("focus", () => suggestions.classList.remove("hidden"));
-    input.addEventListener("blur", () => setTimeout(()=>suggestions.classList.add("hidden"), 150));
-    suggestions.querySelectorAll("[data-s]").forEach(btn => {
-      btn.addEventListener("click", () => { input.value = btn.dataset.s; suggestions.classList.add("hidden"); });
-    });
-
-    // --- Quick actions ---
-    document.getElementById("qaPay").onclick = () => { msgMine("pay @ari 20 for lunch"); handleQuery("pay @ari 20 for lunch"); };
-    document.getElementById("qaRide").onclick = () => { msgMine("ride to Atocha at 7pm"); handleQuery("ride to Atocha at 7pm"); };
-    document.getElementById("qaOrder").onclick = () => { msgMine("order oat milk and eggs"); handleQuery("order oat milk and eggs"); };
-
-    // --- Core: handle query ---
-    function handleQuery(q) {
-      const intent = parseIntent(q);
-      const thinking = msgBot("Omnia is thinking…", true);
-
-      setTimeout(() => {
-        if (intent.type === "pay") {
-          thinking.innerHTML = `Got it. Preparing to send <b>€${intent.amount.toFixed(2)}</b> to <b>${intent.to}</b>${intent.note ? ` for <b>${intent.note}</b>` : ""}.`;
-          renderPay(intent);
-          return;
-        }
-        if (intent.type === "ride") {
-          thinking.innerHTML = `Sure. Finding rides to <b>${intent.where}</b> (${intent.when}).`;
-          renderRide(intent);
-          return;
-        }
-        if (intent.type === "order") {
-          thinking.innerHTML = `Okay. Adding <b>${intent.item}</b> to your basket.`;
-          renderOrder(intent.item);
-          return;
-        }
-        if (intent.type === "weather") {
-          thinking.innerHTML = `Weather in <b>${intent.where}</b> — looks mild with a chance of clouds. (Demo)`;
-          return;
-        }
-        if (intent.type === "question") {
-          thinking.innerHTML = `Here’s what I found for: <b>${intent.text}</b>.`;
-          const url = `https://www.google.com/search?q=${encodeURIComponent(intent.text)}`;
-          thinking.insertAdjacentHTML("beforeend", `<div class="mt-2"><a class="underline" target="_blank" href="${url}">Open results ↗</a></div>`);
-          return;
-        }
-        thinking.innerHTML = "Please type a request.";
-      }, 350);
+      if (intent.type==='order') {
+        if (!list.includes(intent.item)) { list.unshift(intent.item); mem.set('omnia:list', list.slice(0,12)); }
+        const url = `https://www.amazon.co.uk/s?k=${encodeURIComponent(intent.item)}`;
+        done(`🛒 Adding <b>${intent.item}</b> to your basket.<br/><a class="underline" href="${url}" target="_blank">Search stores</a>`);
+        return;
+      }
+      if (intent.type==='weather') {
+        done(`🌤 Weather in <b>${intent.where}</b>: 22°C, light breeze. (Demo)`);
+        return;
+      }
+      if (intent.type==='open') {
+        const tget = intent.target.toLowerCase();
+        const link = tget.includes('map') ? 'https://maps.google.com' :
+                     tget.includes('mail') ? 'mailto:' :
+                     tget.includes('sms') ? 'sms:' :
+                     tget.includes('whatsapp') ? 'https://wa.me/' :
+                     `https://www.google.com/search?q=${encodeURIComponent(intent.target)}`;
+        done(`🧭 Opening <b>${intent.target}</b><br/><a class="underline" href="${link}" target="_blank">Go</a>`);
+        return;
+      }
+      // search
+      const url = `https://www.google.com/search?q=${encodeURIComponent(intent.text)}`;
+      done(`🔎 Search results for <b>${intent.text}</b><br/><a class="underline" href="${url}" target="_blank">Open results</a>`);
     }
 
-    // Form submit
-    document.getElementById("intentForm").addEventListener("submit", (e) => {
+    /* ---------- Form handlers ---------- */
+    document.getElementById('oracle').addEventListener('submit', (e)=>{
       e.preventDefault();
-      const q = input.value.trim();
-      if (!q) return;
-      msgMine(q);
-      input.value = "";
-      handleQuery(q);
+      const text = qEl.value.trim();
+      if (!text) return;
+      bubble(text, true);
+      const intent = parseIntent(text);
+      qEl.value = ''; renderHints('');
+      act(intent);
     });
+
+    /* ---------- Quick modules → open sheets ---------- */
+    const sheet = document.getElementById('sheet');
+    const sheetBody = document.getElementById('sheetBody');
+    const openSheet = html => { sheetBody.innerHTML = html; sheet.classList.remove('hidden'); }
+    const closeSheet = () => sheet.classList.add('hidden');
+    document.getElementById('closeSheet').addEventListener('click', closeSheet);
+    sheet.addEventListener('click', (e)=>{ if(e.target===sheet) closeSheet(); });
+
+    const renderPay = (preset={}) => openSheet(`
+      <h3 class="text-lg font-semibold">Send money</h3>
+      <p class="text-sm text-white/70 mb-3">OmniPay secure transfer</p>
+      <label class="text-xs text-white/60">Recipient</label>
+      <input id="payTo" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" placeholder="@username" value="${preset.to||contacts[0]}">
+      <label class="text-xs text-white/60">Amount</label>
+      <input id="payAmt" type="number" min="1" step="0.01" class="w-full h-11 rounded-md bg-white/10 px-3 mb-3" value="${preset.amount||20}">
+      <label class="text-xs text-white/60">Note</label>
+      <input id="payNote" class="w-full h-11 rounded-md bg-white/10 px-3" placeholder="What’s this for?" value="${preset.note||''}">
+      <div class="flex gap-2 mt-4">
+        <button id="sendNow" class="flex-1 h-11 rounded-xl bg-white text-black tap">Send</button>
+        <a id="sendPaypal" class="flex-1 h-11 rounded-xl glass card grid place-items-center tap" target="_blank">PayPal</a>
+      </div>
+    `);
+    const renderRide = (plan={}) => openSheet(`
+      <h3 class="text-lg font-semibold">Ride options</h3>
+      <p class="text-sm text-white/70 mb-3">Destination: <b>${plan.where||places[0]}</b> • When: <b>${plan.when||'soon'}</b></p>
+      <div class="grid gap-2">
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.where||places[0])}">Open in Google Maps</a>
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://m.uber.com/ul/">Open Uber</a>
+      </div>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black tap" id="bookRide">Book best option</button>
+    `);
+    const renderOrder = (item) => openSheet(`
+      <h3 class="text-lg font-semibold">Confirm order</h3>
+      <p class="text-sm text-white/70">Groceries in ~25 minutes.</p>
+      <ul class="list-disc ml-6 my-3 text-sm">
+        ${[...list.slice(0,3), item ? `+ ${item}` : ''].filter(Boolean).map(x=>`<li>${x}</li>`).join('')}
+      </ul>
+      <div class="grid gap-2">
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.amazon.co.uk/s?k=${encodeURIComponent(item||'oat milk eggs')}">Search Amazon</a>
+        <a class="px-3 py-3 rounded-xl glass card text-left block tap" target="_blank" href="https://www.google.com/search?q=${encodeURIComponent(item||'groceries near me')}">Search Google</a>
+      </div>
+      <button class="w-full mt-4 h-11 rounded-xl bg-white text-black tap" id="payOrder">Pay with OmniPay</button>
+    `);
+
+    document.getElementById('m-pay').onclick = () => renderPay();
+    document.getElementById('m-ride').onclick = () => renderRide({});
+    document.getElementById('m-order').onclick = () => renderOrder();
+    document.getElementById('navPay').onclick = () => renderPay();
+    document.getElementById('navRide').onclick = () => renderRide({});
+    document.getElementById('navYou').onclick = () => bubble('Settings coming soon', true);
+
+    sheet.addEventListener('click', (e)=>{
+      if (e.target.id === 'sendNow') {
+        const to = document.getElementById('payTo').value.trim();
+        const amt = parseFloat(document.getElementById('payAmt').value);
+        if (!to) return alert('Enter recipient');
+        if (!Number.isFinite(amt) || amt<=0) return alert('Enter valid amount');
+        bubble(`Sent €${amt.toFixed(2)} to ${to}`, false); closeSheet();
+        const cleanTo = to.replace(/^@/,''); if (!contacts.includes(cleanTo)) { contacts.unshift(cleanTo); mem.set('omnia:contacts', contacts.slice(0,6)); }
+      }
+      if (e.target.id === 'payOrder') { bubble('Order paid • ETA ~25 min', false); closeSheet(); }
+      if (e.target.id === 'bookRide') { bubble('Ride booked • driver en route 🚗', false); closeSheet(); }
+      if (e.target.id === 'sendPaypal') {
+        const to = document.getElementById('payTo').value.trim().replace(/^@/,'');
+        const amt = document.getElementById('payAmt').value; e.target.href=`https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
+      }
+    });
+
+    // Submit helper (typed message)
+    function submitText(text){
+      if (!text) return;
+      bubble(text, true);
+      const intent = parseIntent(text);
+      act(intent);
+    }
+    document.getElementById('oracle').addEventListener('submit', (e)=>{ e.preventDefault(); const t=qEl.value.trim(); qEl.value=''; renderHints(''); submitText(t); });
   </script>
 </body>
 </html>
