@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +16,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { --om1:#7C9EFF; --om2:#22D3EE; }
-    body{background:radial-gradient(60rem 40rem at 20% -10%,#1e293b,#020617 60%),#020617;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif}
+    body{
+      background:radial-gradient(60rem 40rem at 20% -10%,#1e293b,#020617 60%),#020617;
+      color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif
+    }
     .glass{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1)}
     .btn{background:linear-gradient(90deg,#60a5fa,#6366f1);border-radius:.75rem;padding:.75rem 1rem}
     .pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:.75rem;padding:.25rem .5rem;font-size:.7rem}
@@ -28,8 +30,7 @@
 
     /* Omnia icon vibe */
     .iconWrap{
-      width: 56px;height: 56px;border-radius: 16px;
-      display:grid;place-items:center;
+      width: 56px;height: 56px;border-radius: 16px;display:grid;place-items:center;
       background:
         radial-gradient(120% 120% at 0% 0%, rgba(124,158,255,.35), transparent 60%),
         radial-gradient(120% 120% at 100% 100%, rgba(14,165,233,.35), transparent 60%),
@@ -49,41 +50,30 @@
       background:rgba(20,24,38,.95);color:#fff;border:1px solid rgba(255,255,255,.1);
       padding:.6rem .9rem;border-radius:.75rem;z-index:60;display:none}
 
-    /* --- Tiles --- */
-    .tile {
-      position: relative;
-      aspect-ratio: 1 / 1;
-      display: grid;
-      grid-template-rows: 1fr auto auto;
-      justify-items: center;
-      align-items: center;
-      text-align: center;
+    /* Tiles */
+    .tile { position: relative; aspect-ratio: 1 / 1; display:grid; grid-template-rows: 1fr auto auto;
+      justify-items:center; align-items:center; text-align:center; opacity:0; transform:translateY(8px); }
+    .tile.appear { animation: tileIn .45s cubic-bezier(.2,.8,.2,1) forwards; }
+    @keyframes tileIn { to { opacity:1; transform:translateY(0); } }
+    .tileInner { /* tailwind via @apply would need build, so inline styles: */
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      border-radius:1rem; padding:1rem; width:100%; height:100%;
       transition: transform .12s ease, background .15s ease, border-color .15s ease;
     }
-    .tileInner { @apply glass rounded-2xl p-4 w-full h-full; }
     .tile:hover .tileInner { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); transform: translateY(-2px); }
     .tile h4 { margin-top:.6rem; font-weight:600; }
     .tile p  { font-size:.8rem; color:#cbd5e1; }
 
     /* Badges */
-    .badge {
-      position: absolute; top: 10px; right: 10px;
-      padding: 2px 7px; font-size: .7rem; line-height: 1;
-      border-radius: 999px; background: linear-gradient(90deg,#60a5fa,#22d3ee);
-      color: #0b1220; font-weight: 700; border: 1px solid rgba(255,255,255,.25);
-    }
-
-    /* Tile appear animation */
-    .tile { opacity: 0; transform: translateY(8px); }
-    .tile.appear { animation: tileIn .45s cubic-bezier(.2,.8,.2,1) forwards; }
-    @keyframes tileIn { to { opacity: 1; transform: translateY(0); } }
+    .badge { position:absolute; top:10px; right:10px; padding:2px 7px; font-size:.7rem; line-height:1;
+      border-radius:999px; background:linear-gradient(90deg,#60a5fa,#22d3ee); color:#0b1220; font-weight:700;
+      border:1px solid rgba(255,255,255,.25); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
   <!-- Header -->
   <header class="glass sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-      <!-- Clickable logo (resets app state; no reload) -->
       <button id="logoBtn" class="flex items-center gap-2 cursor-pointer tap ripple">
         <img src="omnia-logo.png" alt="Omnia" class="w-10 h-10 rounded-lg object-cover" />
         <div class="leading-tight text-left">
@@ -91,16 +81,10 @@
           <p class="text-xs text-gray-300">Ask anything. Omnia gets it done.</p>
         </div>
       </button>
-
       <div class="flex-1"></div>
-
       <div class="hidden sm:flex gap-2 mr-2">
-        <span class="pill">Private</span>
-        <span class="pill">Unified ID</span>
-        <span class="pill">OmniPay</span>
+        <span class="pill">Private</span><span class="pill">Unified ID</span><span class="pill">OmniPay</span>
       </div>
-
-      <!-- Share button -->
       <button id="shareBtn" class="glass w-9 h-9 rounded-lg grid place-items-center tap ripple" aria-label="Share Omnia">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <defs><linearGradient id="share-grad" x1="0" y1="0" x2="1" y2="1">
@@ -111,8 +95,6 @@
           <path d="M8.7 10.9l6-3.4M8.7 13.1l6 3.4" stroke="url(#share-grad)" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       </button>
-
-      <!-- Install -->
       <button id="installBtn" class="ml-2 px-3 py-1 bg-blue-500 rounded-lg text-sm hidden">Install</button>
     </div>
   </header>
@@ -120,11 +102,10 @@
   <!-- Main -->
   <main class="flex-1 w-full">
     <section class="max-w-3xl mx-auto w-full px-4 pt-6">
-      <!-- Search -->
       <div class="flex gap-2 mb-4">
         <input id="query" type="text" aria-label="Ask Omnia"
-               placeholder="Ask Omnia anything…  (e.g., pay @ari 20 • ride to Heathrow at 8pm • order oat milk)"
-               class="flex-1 px-4 py-3 rounded-xl text-black" />
+          placeholder="Ask Omnia anything…  (e.g., pay @ari 20 • ride to Heathrow at 8pm • order oat milk)"
+          class="flex-1 px-4 py-3 rounded-xl text-black" />
         <button id="askBtn" class="btn tap ripple" aria-label="Ask">Ask</button>
       </div>
       <div id="results" class="space-y-4 text-sm text-gray-300">
@@ -135,22 +116,18 @@
     <!-- Tiles Modules -->
     <section class="max-w-6xl mx-auto px-4 py-8">
       <h3 class="text-sm uppercase tracking-wide text-gray-400 mb-3">Omnia Modules</h3>
-
-      <!-- 2 cols (mobile) · 3 cols (md) · 4 cols (lg) -->
       <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
         <button data-open="pay" class="tile tap ripple">
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <rect x="3" y="5" width="18" height="14" rx="3" stroke="url(#g1)" stroke-width="1.8"/>
                 <rect x="6" y="10" width="12" height="1.8" rx="0.9" fill="url(#g1)"/>
               </svg>
             </div>
-            <h4>Payments</h4>
-            <p>Send & request</p>
+            <h4>Payments</h4><p>Send & request</p>
           </div>
         </button>
 
@@ -158,15 +135,13 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M5 12l2-4h10l2 4" stroke="url(#g2)" stroke-width="1.8" stroke-linejoin="round"/>
                 <path d="M4 16h16" stroke="url(#g2)" stroke-width="1.8" stroke-linecap="round"/>
                 <circle cx="7.5" cy="16" r="1.6" fill="url(#g2)"/><circle cx="16.5" cy="16" r="1.6" fill="url(#g2)"/>
               </svg>
             </div>
-            <h4>Rides</h4>
-            <p>Book & track</p>
+            <h4>Rides</h4><p>Book & track</p>
           </div>
         </button>
 
@@ -174,14 +149,12 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M6 6h14l-1.2 8.5a3 3 0 0 1-3 2.5H9.5a3 3 0 0 1-3-2.5L6 6z" stroke="url(#g3)" stroke-width="1.8"/>
                 <path d="M9 6c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="url(#g3)" stroke-width="1.8"/>
               </svg>
             </div>
-            <h4>Groceries</h4>
-            <p>Smart list</p>
+            <h4>Groceries</h4><p>Smart list</p>
           </div>
         </button>
 
@@ -189,14 +162,13 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <rect x="4" y="5" width="16" height="14" rx="2" stroke="url(#g4)" stroke-width="1.8"/>
-              <path d="M4 9h16" stroke="url(#g4)" stroke-width="1.8"/>
-              <rect x="8" y="12" width="3" height="3" rx="0.8" fill="url(#g4)"/></svg>
+                <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <rect x="4" y="5" width="16" height="14" rx="2" stroke="url(#g4)" stroke-width="1.8"/>
+                <path d="M4 9h16" stroke="url(#g4)" stroke-width="1.8"/>
+                <rect x="8" y="12" width="3" height="3" rx="0.8" fill="url(#g4)"/>
+              </svg>
             </div>
-            <h4>Calendar</h4>
-            <p>Agenda & reminders</p>
+            <h4>Calendar</h4><p>Agenda & reminders</p>
           </div>
         </button>
 
@@ -205,14 +177,12 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="url(#g5)" stroke-width="1.8" stroke-linejoin="round"/>
                 <path d="M7 10h10" stroke="url(#g5)" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
             </div>
-            <h4>Messages</h4>
-            <p>Unified inbox</p>
+            <h4>Messages</h4><p>Unified inbox</p>
           </div>
         </button>
 
@@ -220,14 +190,12 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <circle cx="12" cy="12" r="8" stroke="url(#g6)" stroke-width="1.8"/>
                 <path d="M10 9l6 3-6 3V9z" fill="url(#g6)"/>
               </svg>
             </div>
-            <h4>Media</h4>
-            <p>Music & video</p>
+            <h4>Media</h4><p>Music & video</p>
           </div>
         </button>
 
@@ -235,13 +203,11 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g7" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g7" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M5 12c0-2.8 2.2-5 5-5 1.4 0 2.7.6 3.6 1.6A5 5 0 0 1 22 12c0 4.5-6.7 7-10 10-3.3-3-10-5.5-10-10z" stroke="url(#g7)" stroke-width="1.8" stroke-linejoin="round"/>
               </svg>
             </div>
-            <h4>Health</h4>
-            <p>Snapshot & goals</p>
+            <h4>Health</h4><p>Snapshot & goals</p>
           </div>
         </button>
 
@@ -249,14 +215,12 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g8" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g8" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M4 10l8-6 8 6v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z" stroke="url(#g8)" stroke-width="1.8" stroke-linejoin="round"/>
                 <rect x="10" y="13" width="4" height="5" rx="1" stroke="url(#g8)" stroke-width="1.8"/>
               </svg>
             </div>
-            <h4>Smart Home</h4>
-            <p>Lights & devices</p>
+            <h4>Smart Home</h4><p>Lights & devices</p>
           </div>
         </button>
 
@@ -265,13 +229,11 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g9" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g9" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M3 13l18-6-6 18-3-7-7-5z" stroke="url(#g9)" stroke-width="1.8" stroke-linejoin="round"/>
               </svg>
             </div>
-            <h4>Bookings</h4>
-            <p>Flights & hotels</p>
+            <h4>Bookings</h4><p>Flights & hotels</p>
           </div>
         </button>
 
@@ -279,14 +241,12 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g10" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g10" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" stroke="url(#g10)" stroke-width="1.8"/>
                 <circle cx="12" cy="10" r="2" fill="url(#g10)"/>
               </svg>
             </div>
-            <h4>Maps</h4>
-            <p>Navigate</p>
+            <h4>Maps</h4><p>Navigate</p>
           </div>
         </button>
 
@@ -294,14 +254,13 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g11" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-              <rect x="4" y="6" width="16" height="12" rx="2" stroke="url(#g11)" stroke-width="1.8"/>
-              <circle cx="9" cy="12" r="2" stroke="url(#g11)" stroke-width="1.6"/>
-              <rect x="12.5" y="11" width="5" height="2" rx="1" fill="url(#g11)"/></svg>
+                <defs><linearGradient id="g11" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <rect x="4" y="6" width="16" height="12" rx="2" stroke="url(#g11)" stroke-width="1.8"/>
+                <circle cx="9" cy="12" r="2" stroke="url(#g11)" stroke-width="1.6"/>
+                <rect x="12.5" y="11" width="5" height="2" rx="1" fill="url(#g11)"/>
+              </svg>
             </div>
-            <h4>ID & Passes</h4>
-            <p>Wallet</p>
+            <h4>ID & Passes</h4><p>Wallet</p>
           </div>
         </button>
 
@@ -309,13 +268,11 @@
           <div class="tileInner">
             <div class="iconWrap">
               <svg class="icon" viewBox="0 0 24 24" fill="none">
-                <defs><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                <defs><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C9EFF"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
                 <path d="M4 7a2 2 0 0 1 2-2h5l3 3h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z" stroke="url(#g12)" stroke-width="1.8" stroke-linejoin="round"/>
               </svg>
             </div>
-            <h4>Files</h4>
-            <p>Docs & notes</p>
+            <h4>Files</h4><p>Docs & notes</p>
           </div>
         </button>
 
@@ -383,12 +340,9 @@
         cell.replaceChildren(placeholderNode(img.alt||"Image"));
       } else {
         const el = document.createElement("img");
-        el.loading = "lazy";
-        el.alt = img.alt || "Image result";
-        el.referrerPolicy = "no-referrer";
-        el.crossOrigin = "anonymous";
-        el.src = src;
-        el.onerror = () => { cell.replaceChildren(placeholderNode(el.alt)); };
+        el.loading = "lazy"; el.alt = img.alt || "Image result";
+        el.referrerPolicy = "no-referrer"; el.crossOrigin = "anonymous";
+        el.src = src; el.onerror = () => cell.replaceChildren(placeholderNode(el.alt));
         cell.appendChild(el);
       }
       container.appendChild(cell);
@@ -396,13 +350,12 @@
     return container.outerHTML;
   }
 
-  /* ===== Share button ===== */
+  /* ===== Share ===== */
   const shareBtn = $("#shareBtn");
   const toast = $("#toast");
   async function showToast(msg="Copied!") {
     if (!toast) return;
-    toast.textContent = msg;
-    toast.style.display = "block";
+    toast.textContent = msg; toast.style.display = "block";
     clearTimeout(window.__toastTimer);
     window.__toastTimer = setTimeout(()=> toast.style.display="none", 1800);
   }
@@ -418,12 +371,9 @@
 
   /* ===== Logo reset (no reload) ===== */
   $("#logoBtn")?.addEventListener("click", () => {
-    const q = $("#query");
-    const res = $("#results");
+    const q = $("#query"); const res = $("#results");
     if (q) q.value = "";
-    if (res) {
-      res.innerHTML = `<div class="glass p-4 rounded-xl">Tip: press <b>/</b> to focus search. Try “best espresso beans” or “weather Madrid”.</div>`;
-    }
+    if (res) res.innerHTML = `<div class="glass p-4 rounded-xl">Tip: press <b>/</b> to focus search. Try “best espresso beans” or “weather Madrid”.</div>`;
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
@@ -436,17 +386,13 @@
   }
 
   /* ===== Search (in‑app) ===== */
-  const qEl = $("#query");
-  const askBtn = $("#askBtn");
-  const results = $("#results");
-
-  askBtn.addEventListener("click", runSearch);
-  qEl.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); runSearch(); } });
-  window.addEventListener("keydown", e => { if (e.key === "/" && document.activeElement !== qEl) { e.preventDefault(); qEl.focus(); } });
+  const qEl = $("#query"); const askBtn = $("#askBtn"); const results = $("#results");
+  askBtn?.addEventListener("click", runSearch);
+  qEl?.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); runSearch(); } });
+  window.addEventListener("keydown", e => { if (e.key === "/" && document.activeElement !== qEl) { e.preventDefault(); qEl?.focus(); } });
 
   async function runSearch() {
-    const q = qEl.value.trim();
-    if (!q) return;
+    const q = qEl.value.trim(); if (!q) return;
     results.innerHTML = `<div class="glass p-4 rounded-xl">Searching for “${q}”…</div>`;
     try {
       const res = await fetch(`${OMNIA_API}/search?q=${encodeURIComponent(q)}`);
@@ -467,7 +413,6 @@
           ${sourcesRow}
         </div>`;
       }
-
       if (data.wiki?.length) {
         html += `<div>
           <div class="text-sm uppercase text-gray-400 mb-2">From Wikipedia</div>
@@ -485,7 +430,6 @@
           </div>
         </div>`;
       }
-
       if (data.links?.length) {
         html += `<div>
           <div class="text-sm uppercase text-gray-400 mb-2">Top Results</div>
@@ -498,33 +442,34 @@
           </div>
         </div>`;
       }
-
       if (data.images?.length) {
         html += `<div>
           <div class="text-sm uppercase text-gray-400 mb-2">Images</div>
           ${renderImages(data.images)}
         </div>`;
       }
-
       results.innerHTML = html || `<div class="glass p-4 rounded-xl">No results found for “${q}”.</div>`;
     } catch {
       results.innerHTML = `<div class="glass p-4 rounded-xl">Couldn’t reach Omnia API. Check Worker URL and try again.</div>`;
     }
   }
 
-  /* ===== Bottom Sheet helpers & simple modules ===== */
-  const sheet = $("#sheet");
-  const sheetBody = $("#sheetBody");
-  const openSheet = (html)=>{ sheetBody.innerHTML = html; sheet.classList.remove("hidden"); };
-  const closeSheet = ()=> sheet.classList.add("hidden");
-  $("#closeSheet").addEventListener("click", closeSheet);
-  sheet.addEventListener("click",(e)=>{ if(e.target===sheet) closeSheet(); });
+  /* ===== Bottom Sheet + Are you sure? ===== */
+  const sheet = $("#sheet"); const sheetBody = $("#sheetBody");
+  function openSheet(html){ sheetBody.innerHTML = html; sheet.classList.remove("hidden"); }
+  function hideSheet(){ sheet.classList.add("hidden"); }
+  function confirmClose(){ return confirm("Are you sure you want to close this? Any unsaved actions will be lost."); }
+  function closeSheet({ force=false } = {}){ if (!force && !confirmClose()) return; hideSheet(); }
+  $("#closeSheet")?.addEventListener("click", () => closeSheet({ force:false }));
+  sheet?.addEventListener("click", (e)=>{ if (e.target === sheet) closeSheet({ force:false }); });
 
+  // tiny local memory
   const mem = { get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
   const contacts = mem.get("omnia:contacts", ["ari","bea","chen"]);
   const places = mem.get("omnia:places", ["Heathrow","Atocha Station"]);
   const list = mem.get("omnia:list", ["Oat milk","Eggs","Espresso pods"]);
 
+  // Modules
   function sheetPay(preset={}){ openSheet(`
     <h3 class="text-lg font-semibold">Send money</h3>
     <p class="text-sm text-gray-300 mb-3">OmniPay secure transfer</p>
@@ -552,7 +497,7 @@
     <h3 class="text-lg font-semibold">Confirm order</h3>
     <p class="text-sm text-gray-300">Groceries in ~25 minutes.</p>
     <ul class="list-disc ml-6 my-3 text-sm">
-      ${[...list.slice(0,3), item ? `+ ${item}` : ''].filter(Boolean).map(x=>`<li>${x}</li>`).join('')}
+      ${[...list.slice(0,3), item ? \`+ ${item}\` : ''].filter(Boolean).map(x=>\`<li>\${x}</li>\`).join('')}
     </ul>
     <div class="grid gap-2">
       <a class="px-3 py-3 glass rounded-xl block tap ripple" target="_blank" href="https://www.amazon.co.uk/s?k=${encodeURIComponent(item||'oat milk eggs')}">Search Amazon</a>
@@ -622,13 +567,35 @@
     });
   });
 
-  // Appear animation — stagger as they come into view
+  // Sheet actions — use force:true to bypass confirmation after success
+  sheet.addEventListener("click",(e)=>{
+    if (e.target.id === "sendNow") {
+      const to = $("#payTo").value.trim();
+      const amt = parseFloat($("#payAmt").value);
+      if (!to) return alert("Enter recipient");
+      if (!Number.isFinite(amt) || amt<=0) return alert("Enter valid amount");
+      alert(`Sent €${amt.toFixed(2)} to ${to}`);
+      const clean = to.replace(/^@/,'');
+      const contacts = JSON.parse(localStorage.getItem("omnia:contacts")||"[]");
+      if (!contacts.includes(clean)) { contacts.unshift(clean); localStorage.setItem("omnia:contacts", JSON.stringify(contacts.slice(0,6))); }
+      closeSheet({ force: true });
+    }
+    if (e.target.id === "payOrder") { alert("Order paid • ETA ~25 min"); closeSheet({ force: true }); }
+    if (e.target.id === "bookRide") { alert("Ride booked • driver en route 🚗"); closeSheet({ force: true }); }
+    if (e.target.id === "sendPaypal") {
+      const to = $("#payTo").value.trim().replace(/^@/,'');
+      const amt = $("#payAmt").value;
+      e.target.href = `https://www.paypal.com/paypalme/${encodeURIComponent(to||'')}/${encodeURIComponent(amt||'')}`;
+    }
+  });
+
+  /* ===== Tile appear animation ===== */
   const tiles = Array.from(document.querySelectorAll('.tile'));
   const io = new IntersectionObserver((entries)=>{
     entries.forEach((e)=> {
       if (e.isIntersecting) {
         const idx = tiles.indexOf(e.target);
-        e.target.style.animationDelay = `${(idx % 8) * 40}ms`; // tiny stagger
+        e.target.style.animationDelay = `${(idx % 8) * 40}ms`;
         e.target.classList.add('appear');
         io.unobserve(e.target);
       }
@@ -638,8 +605,8 @@
 
   /* ===== Install (A2HS) ===== */
   let deferredPrompt; const installBtn = $("#installBtn");
-  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; installBtn.classList.remove("hidden"); });
-  installBtn.addEventListener("click", async () => { installBtn.classList.add("hidden"); deferredPrompt?.prompt(); deferredPrompt = null; });
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; installBtn?.classList.remove("hidden"); });
+  installBtn?.addEventListener("click", async () => { installBtn?.classList.add("hidden"); deferredPrompt?.prompt(); deferredPrompt = null; });
 
   /* ===== Service Worker ===== */
   if ("serviceWorker" in navigator) {
